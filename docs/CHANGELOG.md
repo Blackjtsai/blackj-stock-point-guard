@@ -15,3 +15,12 @@
 - 實際執行一次 08:30 PRE 排程：成功產出 `reports/2026-07-04/0830_PRE.md`（完整 A/B/C/D 欄位 + CASH_WARNING）並建立 `reports/state.json`；MID / POST 兩份 prompt 已撰寫但尚未實際執行過
 - **發現並修正**：`.claude/scheduled_tasks.lock`（Claude Code CLI 執行期產生的 runtime lock 檔）被 `run_analysis.sh` 的 `git add -A` 誤帶入版控，已補進 `.gitignore` 並 `git rm --cached`
 - **發現並修正的流程缺口**：專案啟動以來共 6 次 commit，全部由 `run_analysis.sh` 自動 commit 或手動 commit 完成，從未執行過 `/checkpoint`，導致 `docs/CHANGELOG.md` 不存在、`docs/TODO.md` 未同步實際進度、memory 目錄全空。本次為補做的第一次 checkpoint。
+
+---
+
+## 2026-07-04 排程自動化 commit 與 checkpoint 紀律定案
+
+- 將上一筆記錄的流程缺口（排程自動 commit ≠ 執行過 `/checkpoint`）確認具有通用性，同步升級寫入全域 `~/.claude/universal.md`，新增「排程自動化 commit 與 checkpoint 紀律」章節：判斷 checkpoint 是否做過要看 checkpoint commit / `CHANGELOG.md` 時間戳，不能只看有沒有 commit
+- 釐清規則方向：`/checkpoint` 不是「commit 前的必經關卡」，排程腳本（`run_analysis.sh`）的自動 commit 與 `/checkpoint` 各自獨立運作、互不阻擋；`/checkpoint` 步驟 10 的 commit 只是整套流程做完後的收尾動作
+- 確認往後對話收尾時的執行方式：不會另外詢問「要不要跑 checkpoint」，因為這已是 CLAUDE.md 訂下的既定規範（依「不問已知規範」原則），改由主動偵測對話收尾訊號後直接執行；若該次對話完全沒有開發異動則略過
+- 本次對話本身無程式碼異動（純規範釐清與文件同步），略過 code review
