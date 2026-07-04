@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-04 需求文件與設計文件引用邊界修正（ADR-002）
+
+- 使用者發現 `job/prompts/{PRE,MID,POST}.md` 直接用「第 X 節」引用 `docs/requirements/需求.md` 章節編號，而需求文件會持續改版、章節易位移，屬於脆弱耦合；進一步追問這規範是否該放進設計文件
+- 檢查發現同樣寫法還存在於 `CLAUDE.md`、`job/blueprint.md`，共 3 處
+- 確認正確做法：`docs/design/SDD.md` 新增第 6 節「核心規則」，把核心原則、資料正確性原則、報告欄位規範、三時段任務差異整理成穩定摘要（衍生自需求.md，需求變更時須人工同步此節）；`CLAUDE.md`、`job/blueprint.md`、三份 job prompts 全部改為引用 `docs/design/SDD.md` 第 6.x 節，不再直接引用 `需求.md` 章節編號
+- 在 `CLAUDE.md` 文件資料夾管理規範新增一般性規則：下游程式引用規格內容一律指向 `docs/design/` 衍生文件，不得直接引用 `docs/requirements/` 來源文件的章節編號
+- 新增 `docs/decisions/ADR-002-requirements-design-boundary.md` 記錄此決策與取捨（需求變更時 SDD 第 6 節需人工同步，用「明確同步成本」換「隱性耦合風險」）
+- 本次為文件與 prompt 引用目標調整，未變動報告產出邏輯或欄位規範本身內容
+
 ## 2026-07-04 首次 Checkpoint（回溯彙整 Layer 1 ～ Layer 2 進行中）
 
 - 建立專案骨架：`CLAUDE.md`、`docs/`（design / requirements / decisions）、`.claude/commands/checkpoint.md`
