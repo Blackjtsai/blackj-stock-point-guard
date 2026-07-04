@@ -13,8 +13,8 @@
 - [x] UC-BJSPG 3.1.1 `git init` + 設定 remote（SSH：`git@github.com:Blackjtsai/blackj-stock-point-guard.git`）
 - [x] UC-BJSPG 3.1.1 初始 commit + push
 - [ ] UC-BJSPG 3.1.2 撰寫 3 個 `launchd` plist（08:30 / 12:30 / 21:30）
-- [ ] UC-BJSPG 3.1.2 確認 `claude` CLI 可 headless 執行並使用訂閱帳號額度
-- [ ] UC-BJSPG 3.1.3 確認本機 git 憑證可直接 push（不需額外設定 token）
+- [x] UC-BJSPG 3.1.2 確認 `claude` CLI 可 headless 執行並使用訂閱帳號額度（`claude -p` 已測試成功）
+- [x] UC-BJSPG 3.1.3 確認本機 git 憑證可直接 push（改用 SSH remote，已 push 成功）
 
 ## Layer 2：分析與報告產出邏輯（UC-BJSPG 3.5.1 ～ 3.5.6）
 

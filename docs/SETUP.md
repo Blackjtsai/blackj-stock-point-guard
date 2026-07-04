@@ -7,7 +7,7 @@
 | 項目 | 版本需求 | 安裝指令 | 狀態 |
 |---|---|---|---|
 | macOS | 需支援 `launchd` | — | ✅ |
-| Claude Code CLI | 已登入訂閱帳號（約 $20/月方案） | `claude --version` | ❌ 待確認 |
+| Claude Code CLI | 已登入訂閱帳號（約 $20/月方案），headless 模式（`claude -p`）已驗證可用 | `claude --version` / `claude -p "..."` | ✅ |
 | Git | SSH 憑證（`~/.ssh/id_ed25519_github`），可直接 push | `ssh -T git@github.com` | ✅ |
 | GitHub Repo | Public repo 已建立，本機已 push 初始 commit | git@github.com:Blackjtsai/blackj-stock-point-guard.git | ✅ |
 
