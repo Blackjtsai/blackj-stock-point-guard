@@ -1,0 +1,33 @@
+{
+  "last_updated": "2026-07-04T08:30:00+08:00",
+  "stocks": {
+    "3702": {
+      "name": "大聯大",
+      "last_action": "觀望看戲",
+      "last_action_time": "2026-07-04T08:30:00+08:00",
+      "last_report": "reports/2026-07-04/0830_PRE.md",
+      "pending_rebuy": false
+    },
+    "2356": {
+      "name": "英業達",
+      "last_action": "觀望看戲",
+      "last_action_time": "2026-07-04T08:30:00+08:00",
+      "last_report": "reports/2026-07-04/0830_PRE.md",
+      "pending_rebuy": false
+    },
+    "2609": {
+      "name": "陽明",
+      "last_action": "金字塔低接",
+      "last_action_time": "2026-07-04T08:30:00+08:00",
+      "last_report": "reports/2026-07-04/0830_PRE.md",
+      "pending_rebuy": false
+    },
+    "2421": {
+      "name": "建準",
+      "last_action": "觀望看戲",
+      "last_action_time": "2026-07-04T08:30:00+08:00",
+      "last_report": "reports/2026-07-04/0830_PRE.md",
+      "pending_rebuy": false
+    }
+  }
+}

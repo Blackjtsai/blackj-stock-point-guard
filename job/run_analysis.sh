@@ -15,6 +15,15 @@
 # - claude 執行失敗（含訂閱額度不足）→ 記錄 log 後直接結束，不重試
 # - 找不到對應 prompt 檔 → 記錄 log 後直接結束（Layer 2 完成前的預期狀況）
 # - 沒有任何檔案異動 → 不 commit
+#
+# 權限設計（見 docs/decisions/ADR-001-headless-permissions.md）：
+# 無人值守執行，分兩層限制：
+# 1. --tools 硬白名單，完全不含 Bash、Agent 等會執行指令或衍生子任務的工具
+# 2. --allowedTools 對 Write/Edit 限定只能動 reports/ 與 job/inbox/，對 WebFetch
+#    限定只能打信任網域清單。Read/Grep/Glob/WebSearch 經實測無法有效路徑限定，
+#    視為可讀但不可外流：唯一的資料外流管道（WebFetch）鎖在信任網域，
+#    即使 Read 讀到非預期內容也送不出去。
+# git commit/push 由本腳本自己執行，不假手 claude。
 
 set -uo pipefail
 
@@ -34,7 +43,12 @@ if [ ! -f "$PROMPT_FILE" ]; then
   exit 0
 fi
 
-claude -p "$(cat "$PROMPT_FILE")" >> "$LOG_FILE" 2>&1
+TRUSTED_FETCH_DOMAINS="WebFetch(domain:tw.stock.yahoo.com) WebFetch(domain:finance.yahoo.com) WebFetch(domain:www.twse.com.tw)"
+
+claude -p "$(cat "$PROMPT_FILE")" \
+  --tools "WebSearch,WebFetch,Read,Write,Edit,Glob,Grep" \
+  --allowedTools "Write(./reports/**) Edit(./reports/**) Edit(./job/inbox/**) ${TRUSTED_FETCH_DOMAINS}" \
+  >> "$LOG_FILE" 2>&1
 CLAUDE_EXIT=$?
 
 if [ "$CLAUDE_EXIT" -ne 0 ]; then
