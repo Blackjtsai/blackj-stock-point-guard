@@ -15,7 +15,7 @@
 
 1. ~~本機 `git init`，設定 remote~~ — 已完成，remote 使用 SSH：`git@github.com:Blackjtsai/blackj-stock-point-guard.git`
 2. ~~確認 `claude` CLI 已登入並可 headless 執行~~ — 已驗證
-3. ~~建立 3 個 `launchd` plist~~ — 已建立於 `job/launchd/`，並複製到 `~/Library/LaunchAgents/`
+3. ~~建立 3 個 `launchd` plist~~ — 已建立於 `job/launchd/`，並複製到 `~/Library/LaunchAgents/`；僅週一至週五觸發（`StartCalendarInterval` 為 Weekday 1～5 的陣列），週末不執行
 4. ~~`launchctl load` 註冊排程~~ — 已註冊並手動測試一次成功
 
 ## 服務啟動

@@ -4,7 +4,7 @@
 
 ```mermaid
 graph TD
-    L[launchd 排程<br/>08:30 / 12:30 / 21:30] -->|headless 呼叫| C[claude CLI<br/>分析流程]
+    L[launchd 排程<br/>平日 08:30 / 12:30 / 21:30] -->|headless 呼叫| C[claude CLI<br/>分析流程]
     C -->|WebSearch/WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
     WL[job/watchlist.json<br/>關注股清單] -->|讀取| C
     IB[job/inbox/links.md<br/>YouTube/新聞連結] -->|讀取/標記已處理| C

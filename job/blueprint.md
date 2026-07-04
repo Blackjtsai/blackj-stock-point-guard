@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.2 ／ 最後更新：2026-07-04
+> 版本：v0.3 ／ 最後更新：2026-07-04
 
 ## 技術棧
 
@@ -18,10 +18,10 @@ job/
 ├── blueprint.md
 ├── run_analysis.sh          # launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）
 ├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
-├── launchd/                 # plist 原始檔（版控），實際註冊在 ~/Library/LaunchAgents/
-│   ├── com.blackjtsai.bjspg.pre.plist   (08:30)
-│   ├── com.blackjtsai.bjspg.mid.plist   (12:30)
-│   └── com.blackjtsai.bjspg.post.plist  (21:30)
+├── launchd/                 # plist 原始檔（版控），實際註冊在 ~/Library/LaunchAgents/；僅週一至週五觸發
+│   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:30)
+│   ├── com.blackjtsai.bjspg.mid.plist   (平日 12:30)
+│   └── com.blackjtsai.bjspg.post.plist  (平日 21:30)
 ├── prompts/                 # 各時段分析 prompt，皆含「資料正確性鐵律」
 │   ├── PRE.md               # 已實際跑過一次並成功產出報告
 │   ├── MID.md                # 邏輯已寫完，尚未實際執行過
@@ -48,3 +48,4 @@ job/
 - 資料抓不到或多來源矛盾時，必須標示「資料未取得／來源不一致」，禁止用推測值填充
 - 每份報告固定包含 `[CASH_WARNING]` 警語，且只給限價建議、不給市價單追價建議
 - 回補提示僅根據 `reports/state.json` 記錄的系統自身建議歷史推算，不代表使用者真實持股
+- 三個 plist 的 `StartCalendarInterval` 皆為 5 筆陣列（Weekday 1～5），僅平日觸發，週六日不執行
