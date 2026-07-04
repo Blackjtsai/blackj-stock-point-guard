@@ -18,13 +18,13 @@
 
 ## Layer 2：分析與報告產出邏輯（UC-BJSPG 3.5.1 ～ 3.5.6）
 
-- [ ] UC-BJSPG 3.5.6 撰寫排程分析用 prompt / slash command，內含資料正確性原則（多來源比對、抓不到不捏造）
-- [ ] UC-BJSPG 3.5.1 08:30 盤前分析邏輯
-- [ ] UC-BJSPG 3.5.2 12:30 盤中複核邏輯
-- [ ] UC-BJSPG 3.5.3 21:30 盤後定錨邏輯
-- [ ] UC-BJSPG 3.5.4 Markdown 報告格式（A/B/C/D 欄位、CASH_WARNING 警語）
-- [ ] UC-BJSPG 3.5.5 `reports/state.json` 狀態記錄與回補提示邏輯
-- [ ] UC-BJSPG 3.5.7 關注清單管理（新增/移除標的、YouTube/新聞連結輸入）
+- [x] UC-BJSPG 3.5.6 撰寫排程分析用 prompt / slash command，內含資料正確性原則（多來源比對、抓不到不捏造）（`job/prompts/{PRE,MID,POST}.md`）
+- [x] UC-BJSPG 3.5.1 08:30 盤前分析邏輯（已實跑一次，成功產出 `0830_PRE.md`）
+- [ ] UC-BJSPG 3.5.2 12:30 盤中複核邏輯（prompt 已寫完，尚未實際執行過，待 Layer 4 實跑驗證）
+- [ ] UC-BJSPG 3.5.3 21:30 盤後定錨邏輯（prompt 已寫完，尚未實際執行過，待 Layer 4 實跑驗證）
+- [x] UC-BJSPG 3.5.4 Markdown 報告格式（A/B/C/D 欄位、CASH_WARNING 警語）（已於 `0830_PRE.md` 驗證）
+- [x] UC-BJSPG 3.5.5 `reports/state.json` 狀態記錄與回補提示邏輯（已實跑驗證首次執行情境；回補分支邏輯待有實際「高位停利變現→低接」案例時再驗證）
+- [x] UC-BJSPG 3.5.7 關注清單管理（新增/移除標的、YouTube/新聞連結輸入）（`job/watchlist.json`、`job/inbox/links.md`，使用者手動編輯即可，無需額外指令）
 
 ## Layer 3：前台 Dashboard（UC-BJSPG 3.2.1 ～ 3.2.3）
 

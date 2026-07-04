@@ -6,11 +6,15 @@
 graph TD
     L[launchd 排程<br/>08:30 / 12:30 / 21:30] -->|headless 呼叫| C[claude CLI<br/>分析流程]
     C -->|WebSearch/WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
+    WL[job/watchlist.json<br/>關注股清單] -->|讀取| C
+    IB[job/inbox/links.md<br/>YouTube/新聞連結] -->|讀取/標記已處理| C
     C -->|讀寫| S[reports/state.json<br/>建議歷史狀態]
     C -->|寫入| R[reports/YYYY-MM-DD/*.md<br/>分析報告]
     R -->|git commit + push| G[GitHub Repo<br/>Public]
     G -->|GitHub Pages| W[靜態前台網頁<br/>RWD]
     U[使用者] -->|瀏覽器查看| W
+    U -->|手動編輯新增/移除標的、貼連結| WL
+    U -->|手動編輯新增/移除標的、貼連結| IB
 ```
 
 ## Layer 驗收狀態
