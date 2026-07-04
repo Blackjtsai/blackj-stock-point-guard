@@ -10,8 +10,8 @@
 ## Layer 1：環境建置與排程骨架（UC-BJSPG 3.1.1 ～ 3.1.3）
 
 - [x] UC-BJSPG 3.1.1 專案骨架建置（CLAUDE.md / docs / .claude 等）
-- [ ] UC-BJSPG 3.1.1 `git init` + 設定 remote（`https://github.com/Blackjtsai/blackj-stock-point-guard.git`）
-- [ ] UC-BJSPG 3.1.1 初始 commit + push
+- [x] UC-BJSPG 3.1.1 `git init` + 設定 remote（SSH：`git@github.com:Blackjtsai/blackj-stock-point-guard.git`）
+- [x] UC-BJSPG 3.1.1 初始 commit + push
 - [ ] UC-BJSPG 3.1.2 撰寫 3 個 `launchd` plist（08:30 / 12:30 / 21:30）
 - [ ] UC-BJSPG 3.1.2 確認 `claude` CLI 可 headless 執行並使用訂閱帳號額度
 - [ ] UC-BJSPG 3.1.3 確認本機 git 憑證可直接 push（不需額外設定 token）
