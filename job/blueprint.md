@@ -16,7 +16,16 @@
 ```
 job/
 ├── blueprint.md
-└── [待 Layer 2 實作後補充：launchd plist、分析 prompt/slash command 等]
+├── run_analysis.sh          # launchd 呼叫的統一入口，帶 PRE|MID|POST 參數
+├── launchd/                 # plist 原始檔（版控），實際註冊在 ~/Library/LaunchAgents/
+│   ├── com.blackjtsai.bjspg.pre.plist   (08:30)
+│   ├── com.blackjtsai.bjspg.mid.plist   (12:30)
+│   └── com.blackjtsai.bjspg.post.plist  (21:30)
+├── prompts/                 # 各時段分析 prompt；目前為 Layer 1 佔位測試內容
+│   ├── PRE.md
+│   ├── MID.md
+│   └── POST.md
+└── logs/                    # 執行 log，不進版控
 ```
 
 ## 對外介面
@@ -27,7 +36,8 @@ job/
 
 | Layer | UC 範圍 | 狀態 |
 |---|---|---|
-| Layer 2 | UC-BJSPG 3.5.1 ～ 3.5.6 | ⏳ |
+| Layer 1 | UC-BJSPG 3.1.2（launchd 排程骨架） | ✅ |
+| Layer 2 | UC-BJSPG 3.5.1 ～ 3.5.6（`job/prompts/*.md` 換成真正分析邏輯） | ⏳ |
 
 ## 關鍵業務約束
 

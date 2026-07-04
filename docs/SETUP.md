@@ -11,12 +11,12 @@
 | Git | SSH 憑證（`~/.ssh/id_ed25519_github`），可直接 push | `ssh -T git@github.com` | ✅ |
 | GitHub Repo | Public repo 已建立，本機已 push 初始 commit | git@github.com:Blackjtsai/blackj-stock-point-guard.git | ✅ |
 
-## 安裝步驟
+## 安裝步驟（全部已完成）
 
 1. ~~本機 `git init`，設定 remote~~ — 已完成，remote 使用 SSH：`git@github.com:Blackjtsai/blackj-stock-point-guard.git`
-2. 確認 `claude` CLI 已登入使用者自己的訂閱帳號，可用 headless 模式執行（`claude -p "..."`）— 待確認
-3. 建立 3 個 `launchd` plist（`~/Library/LaunchAgents/`），對應 08:30 / 12:30 / 21:30，各自呼叫排程分析流程
-4. `launchctl load` 註冊排程
+2. ~~確認 `claude` CLI 已登入並可 headless 執行~~ — 已驗證
+3. ~~建立 3 個 `launchd` plist~~ — 已建立於 `job/launchd/`，並複製到 `~/Library/LaunchAgents/`
+4. ~~`launchctl load` 註冊排程~~ — 已註冊並手動測試一次成功
 
 ## 服務啟動
 
@@ -26,3 +26,11 @@
 ```bash
 launchctl list | grep bjspg
 ```
+
+若要重新載入（例如修改 plist 後）：
+```bash
+launchctl unload ~/Library/LaunchAgents/com.blackjtsai.bjspg.<pre|mid|post>.plist
+launchctl load ~/Library/LaunchAgents/com.blackjtsai.bjspg.<pre|mid|post>.plist
+```
+
+排程執行 log 位置：`job/logs/{PRE|MID|POST}.log`（不進版控，見 `.gitignore` 的 `*.log`）。

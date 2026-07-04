@@ -12,7 +12,7 @@
 - [x] UC-BJSPG 3.1.1 專案骨架建置（CLAUDE.md / docs / .claude 等）
 - [x] UC-BJSPG 3.1.1 `git init` + 設定 remote（SSH：`git@github.com:Blackjtsai/blackj-stock-point-guard.git`）
 - [x] UC-BJSPG 3.1.1 初始 commit + push
-- [ ] UC-BJSPG 3.1.2 撰寫 3 個 `launchd` plist（08:30 / 12:30 / 21:30）
+- [x] UC-BJSPG 3.1.2 撰寫 3 個 `launchd` plist（08:30 / 12:30 / 21:30），已 `launchctl load` 並用 `job/run_analysis.sh` 手動測試通過（headless 執行 + log + 自動 commit/push 皆正常）
 - [x] UC-BJSPG 3.1.2 確認 `claude` CLI 可 headless 執行並使用訂閱帳號額度（`claude -p` 已測試成功）
 - [x] UC-BJSPG 3.1.3 確認本機 git 憑證可直接 push（改用 SSH remote，已 push 成功）
 

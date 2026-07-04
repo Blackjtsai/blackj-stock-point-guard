@@ -17,7 +17,7 @@ graph TD
 
 | Layer | 名稱 | UC 範圍 | 狀態 |
 |---|---|---|---|
-| Layer 1 | 環境建置與排程骨架 | UC-BJSPG 3.1.1 ～ 3.1.3 | ⏳ |
+| Layer 1 | 環境建置與排程骨架 | UC-BJSPG 3.1.1 ～ 3.1.3 | ✅ |
 | Layer 2 | 分析與報告產出邏輯 | UC-BJSPG 3.5.1 ～ 3.5.6 | ⏳ |
 | Layer 3 | 前台 Dashboard | UC-BJSPG 3.2.1 ～ 3.2.3 | ⏳ |
 | Layer 4 | 端對端整合測試 | 全部 UC | ⏳ |
