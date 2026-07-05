@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.5 ／ 最後更新：2026-07-04
+> 版本：v0.6 ／ 最後更新：2026-07-05
 
 ## 技術棧
 
@@ -16,7 +16,7 @@
 ```
 job/
 ├── blueprint.md
-├── run_analysis.sh          # launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）
+├── run_analysis.sh          # launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）；報告 commit/push 後觸發 web/deploy.sh 更新前台網頁
 ├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
 ├── launchd/                 # plist 原始檔（版控），實際註冊在 ~/Library/LaunchAgents/；僅週一至週五觸發
 │   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:30)
@@ -24,8 +24,8 @@ job/
 │   └── com.blackjtsai.bjspg.post.plist  (平日 21:30)
 ├── prompts/                 # 各時段分析 prompt，皆含「資料正確性鐵律」
 │   ├── PRE.md               # 已實際跑過一次並成功產出報告
-│   ├── MID.md                # 邏輯已寫完，尚未實際執行過
-│   └── POST.md               # 邏輯已寫完，尚未實際執行過
+│   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4
+│   └── POST.md               # 已於 2026-07-04 手動驗證執行一次（休市數據同前日），正式交易日情境待 Layer 4
 ├── inbox/
 │   └── links.md             # 使用者手動貼 YouTube/新聞連結，21:30 POST 讀取分析後標記已處理
 └── logs/                    # 執行 log，不進版控
@@ -40,7 +40,7 @@ job/
 | Layer | UC 範圍 | 狀態 |
 |---|---|---|
 | Layer 1 | UC-BJSPG 3.1.2（launchd 排程骨架） | ✅ |
-| Layer 2 | UC-BJSPG 3.5.1 ～ 3.5.7（三時段分析邏輯） | ⏳ PRE 已實跑驗證；MID/POST 邏輯已寫完但未實跑 |
+| Layer 2 | UC-BJSPG 3.5.1 ～ 3.5.7（三時段分析邏輯） | ⏳ PRE 已實跑驗證；MID/POST 已手動驗證一次，正式交易日情境待 Layer 4 |
 
 ## 關鍵業務約束
 

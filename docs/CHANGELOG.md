@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-07-05 Layer 3 前台 Dashboard 實作（跳過 Layer 2 gate，ADR-004）
+
+- 使用者確認 Layer 2 手動驗證已足夠，指示跳過「上一 Layer 全部 `[x]` 才能開新 Layer」的 gate，直接開始 Layer 3（UC-BJSPG 3.2.1 ～ 3.2.3）
+- 新增 `web/build.py`：純 Python 標準函式庫（不依賴 pandoc/pip 套件）掃描 `reports/*.md`，轉出靜態 HTML 首頁列表與各報告頁，RWD + 深色模式；已用 2026-07-04 三份既有報告本機測試通過
+- 新增 `web/deploy.sh`：build 後用獨立 git worktree（`.gh-pages-worktree/`，已加入 `.gitignore`）操作獨立的 `gh-pages` orphan branch，commit + push；已本機測試成功，`gh-pages` branch 已建立並 push 到 GitHub
+- `job/run_analysis.sh` 在報告 commit/push 後新增一行呼叫 `web/deploy.sh`，讓每次排程執行完自動更新前台網頁
+- 新增 `docs/decisions/ADR-004-github-pages-deploy-path.md`：定案 GitHub Pages 部署路徑為「本機腳本 + 獨立 gh-pages branch」，不用 GitHub Actions，解決 `docs/` 已作專案文件用途與 GitHub Pages 原生設定路徑衝突的問題
+- 確認本機沒有 `gh` CLI 或 API token，GitHub Pages 的「Settings → Pages → Source」無法自動化，需使用者手動設定一次（已寫入 `docs/SETUP.md`），設定前網頁尚無法對外瀏覽
+- 同步更新 `docs/design/SDD.md`（UC-BJSPG 3.2.1/3.2.2 完成、3.2.3 定案，v0.3→v0.4）、`docs/design/ARCHITECTURE.md`（Mermaid 圖新增 `gh-pages` 部署路徑、待確認事項改寫為已定案機制）、`web/blueprint.md`（v0.1→v0.2）、`job/blueprint.md`（v0.5→v0.6，補上 web deploy 觸發與 MID/POST 已驗證狀態）、`docs/TODO.md`
+- **Code review（medium，8 角度平行）發現並修復 7 項問題**：(1) `web/deploy.sh` 建立 orphan branch 時 `git checkout --orphan &amp;&amp; git rm -rf .` 若前半失敗會靜默留下 main 全樹內容並被後續 commit/push 到公開 gh-pages branch，改為顯式檢查失敗並清掉損毀的 worktree；(2)(3) `job/run_analysis.sh` 呼叫 `web/deploy.sh` 原本不檢查 exit status、也不管報告 `git push` 是否成功就無條件部署，改為 push 失敗時略過部署、deploy 失敗時記錄明確錯誤訊息；(4) `web/deploy.sh` 的 `git push origin gh-pages` 與 `python3 build.py` 原本都不檢查結果，改為失敗即記錄並中止，不繼續 commit/push 半成品；(5) `web/build.py` 的 `find_reports()` 在 `reports/` 不存在時會丟未捕捉的 `FileNotFoundError`，改為視為「尚無報告」回傳空清單；(6) `render_table()` 資料列欄位數與表頭不符時（如儲存格內含 `|` 字元）會造成欄位錯位，改為自動補齊/截斷對齊表頭；(7) `web/build.py` 6 個函式皆缺少 CLAUDE.md 規定的一行 docstring，已全數補上。全部修復後重新以本機 build+deploy 驗證正常運作，未發現回歸
+
 ## 2026-07-04 手動驗證 MID/POST 邏輯，發現並修正 WebFetch 全市場大表格編造數字風險（ADR-003）
 
 - 手動觸發一次 12:30 `MID` 與 21:30 `POST` 分析邏輯（Layer 2 驗證，非 launchd 正式排程），確認當天（2026-07-04，週六）台股休市、大盤與四檔關注股數據皆與 08:30 `PRE` 報告相同，兩份報告皆如實標示「無新資料」，`state.json` 未更動

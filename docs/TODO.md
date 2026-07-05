@@ -28,10 +28,13 @@
 
 ## Layer 3：前台 Dashboard（UC-BJSPG 3.2.1 ～ 3.2.3）
 
-- [ ] UC-BJSPG 3.2.1 靜態報告列表頁（簡單列表，最新在最上）
-- [ ] UC-BJSPG 3.2.2 RWD 版面（手機/桌機皆可讀）
-- [ ] UC-BJSPG 3.2.3 決定 GitHub Pages 部署方式（root / gh-pages 分支，因 `docs/` 已作專案文件用途，見 ARCHITECTURE.md 待確認事項）
-- [ ] UC-BJSPG 3.2.3 GitHub Pages 部署設定完成，確認可上網瀏覽
+> 使用者於 2026-07-05 確認 Layer 2 手動驗證已足夠，指示跳過 Layer gate 直接開始 Layer 3。
+
+- [x] UC-BJSPG 3.2.1 靜態報告列表頁（`web/build.py` 產生 `index.html`，依日期新到舊列出 PRE/MID/POST 連結；已用 2026-07-04 三份報告本機測試通過）
+- [x] UC-BJSPG 3.2.2 RWD 版面（手寫 CSS，flexbox + 表格 `overflow-x:auto`，支援淺色/深色模式）
+- [x] UC-BJSPG 3.2.3 決定 GitHub Pages 部署方式：**本機腳本（`web/deploy.sh`）+ 獨立 `gh-pages` orphan branch**，不用 GitHub Actions，與 `docs/` 專案文件互不衝突（見 ARCHITECTURE.md）
+- [x] UC-BJSPG 3.2.3 `web/deploy.sh` 已本機測試成功，`gh-pages` branch 已建立並 push 到 GitHub（已串接進 `job/run_analysis.sh`，每次報告 commit 後自動觸發）
+- [ ] UC-BJSPG 3.2.3 GitHub Pages 設定（repo Settings → Pages → Source: Deploy from branch → `gh-pages` / `/(root)`）——**需使用者手動至 GitHub 網頁設定一次**（沒有 `gh` CLI/API token 可自動化），設定後確認網址可上網瀏覽
 
 ## Layer 4：端對端整合測試
 

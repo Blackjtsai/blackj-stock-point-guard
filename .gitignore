@@ -3,3 +3,5 @@
 *.log
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+.gh-pages-worktree/
+__pycache__/

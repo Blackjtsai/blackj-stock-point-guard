@@ -2,10 +2,10 @@
 # ============================================================
 # 檔案名稱：run_analysis.sh
 # 中文名稱：排程分析執行腳本
-# 功能說明：由 launchd 於排定時間呼叫，執行 claude headless 分析，若有檔案異動則 commit + push
+# 功能說明：由 launchd 於排定時間呼叫，執行 claude headless 分析，若有檔案異動則 commit + push，並觸發前台網頁部署
 # 所屬模組：job/
 # 建立日期：2026-07-04
-# 修改日期：2026-07-04
+# 修改日期：2026-07-05
 # 開發者　：Claude Code
 # ============================================================
 #
@@ -56,12 +56,28 @@ if [ "$CLAUDE_EXIT" -ne 0 ]; then
   exit 0
 fi
 
+PUSHED=0
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "job: ${REPORT_TYPE} 報告 $(date '+%Y-%m-%d %H:%M')" >> "$LOG_FILE" 2>&1
-  git push >> "$LOG_FILE" 2>&1
+  if git push >> "$LOG_FILE" 2>&1; then
+    PUSHED=1
+  else
+    echo "git push 失敗，本次不重試；略過網頁部署避免公開網頁顯示尚未推送成功的內容" >> "$LOG_FILE"
+  fi
 else
   echo "無檔案異動，略過 commit" >> "$LOG_FILE"
+  PUSHED=1
+fi
+
+# 報告更新後，同步重建並部署前台網頁（UC-BJSPG 3.2.3，見 web/deploy.sh）
+# 僅在「本次無異動」或「push 成功」時才部署，避免 push 失敗時網頁顯示未同步到 GitHub 的內容
+if [ "$PUSHED" -eq 1 ]; then
+  bash "$PROJECT_DIR/web/deploy.sh" >> "$LOG_FILE" 2>&1
+  DEPLOY_EXIT=$?
+  if [ "$DEPLOY_EXIT" -ne 0 ]; then
+    echo "web/deploy.sh 執行失敗（exit ${DEPLOY_EXIT}），本次網頁未更新，不重試" >> "$LOG_FILE"
+  fi
 fi
 
 echo "===== $(date '+%Y-%m-%d %H:%M:%S') 執行結束 =====" >> "$LOG_FILE"
