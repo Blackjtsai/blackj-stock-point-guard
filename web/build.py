@@ -33,14 +33,6 @@ body {
   line-height: 1.7;
   background: #fafafa; color: #1a1a1a;
 }
-@media (prefers-color-scheme: dark) {
-  body { background: #1a1a1a; color: #e6e6e6; }
-  a { color: #7cb8ff; }
-  table { border-color: #444 !important; }
-  th, td { border-color: #444 !important; }
-  blockquote { border-color: #a06; background: #2a1a1a; }
-  hr { border-color: #444; }
-}
 .container { max-width: 780px; margin: 0 auto; padding: 16px 20px 60px; }
 h1 { font-size: 1.4rem; }
 h2 { font-size: 1.2rem; margin-top: 2em; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
@@ -71,6 +63,59 @@ th { background: rgba(127,127,127,0.15); }
 }
 .empty-state { margin-top: 3em; text-align: center; opacity: 0.7; }
 footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
+
+.summary-btn {
+  display: inline-block; margin: 0 0 1em 10px;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(127,127,127,0.4);
+  background: rgba(127,127,127,0.12); font-size: 0.9rem;
+}
+.summary-toggle { display: none; }
+.summary-backdrop, .summary-modal { display: none; }
+.summary-toggle:checked ~ .summary-backdrop,
+.summary-toggle:checked ~ .summary-modal { display: block; }
+.summary-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 20; }
+.summary-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 21; background: #fff; color: #1a1a1a;
+  width: min(92vw, 480px); max-height: 82vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.summary-modal h2 { margin-top: 0; }
+.summary-close {
+  position: absolute; top: 10px; right: 16px; cursor: pointer;
+  font-size: 1.3rem; opacity: 0.6;
+}
+.summary-close:hover { opacity: 1; }
+.stock-card {
+  border: 1px solid rgba(127,127,127,0.3); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+}
+.stock-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stock-card-head strong { font-size: 1.05rem; }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+}
+.badge-buy { background: #16833e22; color: #0f6b31; }
+.badge-hold { background: #77777730; color: #555; }
+.badge-sell { background: #c0392b22; color: #a53324; }
+.stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
+
+/* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
+   若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e6e6e6; }
+  a { color: #7cb8ff; }
+  hr { border-color: #444; }
+  blockquote { border-color: #ff6b6b; background: #33201f; color: #f2d9d9; }
+  table { border-color: #444; }
+  th, td { border-color: #444; }
+  .summary-modal { background: #232323; color: #e6e6e6; }
+  .badge-buy { background: #2ecc7133; color: #7bedac; }
+  .badge-hold { background: #ffffff26; color: #ddd; }
+  .badge-sell { background: #ff6b6b33; color: #ffabab; }
+}
 """
 
 
@@ -191,6 +236,103 @@ def markdown_to_html(md_text: str) -> str:
     return "\n".join(out)
 
 
+ACTION_BADGE = {
+    "金字塔低接": "badge-buy",
+    "觀望看戲": "badge-hold",
+    "高位停利變現": "badge-sell",
+}
+
+
+def badge_class(action: str) -> str:
+    """依建議動作文字對應徽章樣式 class，遇到未知動作一律用中性樣式，不假設"""
+    for key, cls in ACTION_BADGE.items():
+        if key in action:
+            return cls
+    return "badge-hold"
+
+
+def extract_stock_summary(md_text: str) -> list[dict]:
+    """擷取報告中「代號｜名稱｜...建議...」開頭的建議動作彙整表（每份報告固定會有這張表，與 B 節「代號｜名稱｜融資...」籌碼表用表頭含「建議」二字區分），回傳每檔標的的代號/名稱/建議動作/備註；找不到則回傳空清單"""
+    lines = md_text.splitlines()
+    for i, line in enumerate(lines):
+        if not re.match(r"^\s*\|\s*代號\s*\|\s*名稱\s*\|", line):
+            continue
+        if "建議" not in line:
+            continue
+        table_lines = [line]
+        j = i + 1
+        while j < len(lines) and lines[j].strip().startswith("|"):
+            table_lines.append(lines[j])
+            j += 1
+        rows = [
+            [c.strip() for c in l.strip().strip("|").split("|")]
+            for l in table_lines
+            if not re.match(r"^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$", l)
+        ]
+        if len(rows) < 2:
+            continue
+        stocks = []
+        for r in rows[1:]:
+            r = (r + [""] * 4)[:4]
+            stocks.append({"code": r[0], "name": r[1], "action": r[2], "note": r[3]})
+        return stocks
+    return []
+
+
+def extract_stock_detail(md_text: str, code: str) -> dict:
+    """在該股票代號對應的段落內盡力擷取收盤價與第一批金字塔限價區間；本報告未提供時對應欄位回傳 None，不臆測填值"""
+    detail: dict = {"price": None, "limit_range": None}
+    blocks = re.findall(rf"^###\s+{re.escape(code)}\b.*?(?=^###\s|\Z)", md_text, re.S | re.M)
+    block = "\n".join(blocks)
+
+    price_m = re.search(r"收盤價[^\n|]*\|\s*\*{0,2}(?:NT\$)?([\d,]+\.?\d*)", block)
+    if not price_m:
+        price_m = re.search(rf"\|\s*{re.escape(code)}\s*\S*\s*\|\s*([\d,]+\.\d+)（", md_text)
+    if price_m:
+        detail["price"] = price_m.group(1)
+
+    range_m = re.search(r"第一批[^\n|]*\|\s*([^\|]+?)\s*\|", block)
+    if range_m:
+        detail["limit_range"] = range_m.group(1).strip()
+
+    return detail
+
+
+def render_summary_modal(md_text: str) -> str:
+    """組出「重點摘要」按鈕 + lightbox（純 CSS checkbox-hack，不需要 JS）；報告沒有建議動作彙整表時回傳空字串，不顯示按鈕"""
+    stocks = extract_stock_summary(md_text)
+    if not stocks:
+        return ""
+
+    cards = []
+    for s in stocks:
+        detail = extract_stock_detail(md_text, s["code"])
+        head = (
+            f'<div class="stock-card-head"><strong>{html.escape(s["code"])} {html.escape(s["name"])}</strong>'
+            f'<span class="badge {badge_class(s["action"])}">{html.escape(s["action"])}</span></div>'
+        )
+        body_bits = []
+        if detail["price"]:
+            body_bits.append(f'收盤價 NT${detail["price"]}')
+        if detail["limit_range"]:
+            body_bits.append(f'第一批限價 {html.escape(detail["limit_range"])}')
+        if s["note"] and s["note"] not in ("—", "-"):
+            body_bits.append(html.escape(s["note"]))
+        body = f'<div class="stock-card-body">{" ／ ".join(body_bits)}</div>' if body_bits else ""
+        cards.append(f'<div class="stock-card">{head}{body}</div>')
+
+    return f"""
+<input type="checkbox" id="summary-toggle" class="summary-toggle">
+<label for="summary-toggle" class="summary-btn">📊 重點摘要</label>
+<label for="summary-toggle" class="summary-backdrop"></label>
+<div class="summary-modal">
+<label for="summary-toggle" class="summary-close">✕</label>
+<h2>重點摘要</h2>
+{''.join(cards)}
+</div>
+"""
+
+
 def find_reports(reports_dir: Path):
     """掃描 reports/ 下所有符合 {HHMM}_{PRE|MID|POST}.md 命名的報告檔，回傳 (date, time, type, path) 清單；reports/ 尚不存在時視為無報告，回傳空清單"""
     if not reports_dir.is_dir():
@@ -215,11 +357,13 @@ def build(out_dir: Path, reports_dir: Path):
     by_date: dict[str, list[tuple[str, str, Path]]] = {}
     for date, time, rtype, md_file in reports:
         title = f"{date} {time} {REPORT_TYPE_LABEL[rtype]}報告（{rtype}）"
-        body_html = markdown_to_html(md_file.read_text(encoding="utf-8"))
+        md_text = md_file.read_text(encoding="utf-8")
+        body_html = markdown_to_html(md_text)
+        summary_html = render_summary_modal(md_text)
         out_html = out_dir / date / f"{time}_{rtype}.html"
         out_html.parent.mkdir(parents=True, exist_ok=True)
         out_html.write_text(
-            page(title, f'<a class="back-link" href="../index.html">← 回首頁</a>\n{body_html}'),
+            page(title, f'<a class="back-link" href="../index.html">← 回首頁</a>{summary_html}\n{body_html}'),
             encoding="utf-8",
         )
         by_date.setdefault(date, []).append((time, rtype, out_html.relative_to(out_dir)))
