@@ -13,14 +13,6 @@ body {
   line-height: 1.7;
   background: #fafafa; color: #1a1a1a;
 }
-@media (prefers-color-scheme: dark) {
-  body { background: #1a1a1a; color: #e6e6e6; }
-  a { color: #7cb8ff; }
-  table { border-color: #444 !important; }
-  th, td { border-color: #444 !important; }
-  blockquote { border-color: #a06; background: #2a1a1a; }
-  hr { border-color: #444; }
-}
 .container { max-width: 780px; margin: 0 auto; padding: 16px 20px 60px; }
 h1 { font-size: 1.4rem; }
 h2 { font-size: 1.2rem; margin-top: 2em; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
@@ -51,11 +43,73 @@ th { background: rgba(127,127,127,0.15); }
 }
 .empty-state { margin-top: 3em; text-align: center; opacity: 0.7; }
 footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
+
+.summary-btn {
+  display: inline-block; margin: 0 0 1em 10px;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(127,127,127,0.4);
+  background: rgba(127,127,127,0.12); font-size: 0.9rem;
+}
+.summary-toggle { display: none; }
+.summary-backdrop, .summary-modal { display: none; }
+.summary-toggle:checked ~ .summary-backdrop,
+.summary-toggle:checked ~ .summary-modal { display: block; }
+.summary-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 20; }
+.summary-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 21; background: #fff; color: #1a1a1a;
+  width: min(92vw, 480px); max-height: 82vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.summary-modal h2 { margin-top: 0; }
+.summary-close {
+  position: absolute; top: 10px; right: 16px; cursor: pointer;
+  font-size: 1.3rem; opacity: 0.6;
+}
+.summary-close:hover { opacity: 1; }
+.stock-card {
+  border: 1px solid rgba(127,127,127,0.3); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+}
+.stock-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stock-card-head strong { font-size: 1.05rem; }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+}
+.badge-buy { background: #16833e22; color: #0f6b31; }
+.badge-hold { background: #77777730; color: #555; }
+.badge-sell { background: #c0392b22; color: #a53324; }
+.stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
+
+/* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
+   若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e6e6e6; }
+  a { color: #7cb8ff; }
+  hr { border-color: #444; }
+  blockquote { border-color: #ff6b6b; background: #33201f; color: #f2d9d9; }
+  table { border-color: #444; }
+  th, td { border-color: #444; }
+  .summary-modal { background: #232323; color: #e6e6e6; }
+  .badge-buy { background: #2ecc7133; color: #7bedac; }
+  .badge-hold { background: #ffffff26; color: #ddd; }
+  .badge-sell { background: #ff6b6b33; color: #ffabab; }
+}
 </style>
 </head>
 <body>
 <div class="container">
 <a class="back-link" href="../index.html">← 回首頁</a>
+<input type="checkbox" id="summary-toggle" class="summary-toggle">
+<label for="summary-toggle" class="summary-btn">📊 重點摘要</label>
+<label for="summary-toggle" class="summary-backdrop"></label>
+<div class="summary-modal">
+<label for="summary-toggle" class="summary-close">✕</label>
+<h2>重點摘要</h2>
+<div class="stock-card"><div class="stock-card-head"><strong>3702 大聯大</strong><span class="badge badge-hold">觀望看戲</span></div><div class="stock-card-body">收盤價 NT$110.00 ／ 維持早盤建議</div></div><div class="stock-card"><div class="stock-card-head"><strong>2356 英業達</strong><span class="badge badge-hold">觀望看戲</span></div><div class="stock-card-body">收盤價 NT$67.60 ／ 維持早盤建議</div></div><div class="stock-card"><div class="stock-card-head"><strong>2609 陽明</strong><span class="badge badge-buy">金字塔低接</span></div><div class="stock-card-body">收盤價 NT$52.40 ／ 維持早盤建議</div></div><div class="stock-card"><div class="stock-card-head"><strong>2421 建準</strong><span class="badge badge-hold">觀望看戲</span></div><div class="stock-card-body">收盤價 NT$149.00 ／ 維持早盤建議</div></div>
+</div>
+
 <h1>BJSPG 盤中複核報告 — 1230_MID</h1>
 <p><strong>報告產出時間</strong>：2026-07-04 12:30（手動觸發，Layer 2 驗證執行，非 launchd 正式排程）</p>
 <p><strong>⚠️ 執行情境說明</strong>：今日（2026-07-04）為週六，台股休市，非正常交易日。launchd 排程已設定僅平日觸發，本次為手動執行以驗證 12:30 複核邏輯（UC-BJSPG 3.5.2），非正式盤中複核。</p>
