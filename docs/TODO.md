@@ -20,8 +20,8 @@
 
 - [x] UC-BJSPG 3.5.6 撰寫排程分析用 prompt / slash command，內含資料正確性原則（多來源比對、抓不到不捏造）（`job/prompts/{PRE,MID,POST}.md`）
 - [x] UC-BJSPG 3.5.1 08:30 盤前分析邏輯（已實跑一次，成功產出 `0830_PRE.md`）
-- [ ] UC-BJSPG 3.5.2 12:30 盤中複核邏輯（prompt 已寫完，尚未實際執行過，待 Layer 4 實跑驗證）
-- [ ] UC-BJSPG 3.5.3 21:30 盤後定錨邏輯（prompt 已寫完，尚未實際執行過，待 Layer 4 實跑驗證）
+- [ ] UC-BJSPG 3.5.2 12:30 盤中複核邏輯（已於 2026-07-04 手動驗證執行一次，因當日休市無新資料可複核；正式交易日的複核情境仍待 Layer 4 實跑驗證）
+- [ ] UC-BJSPG 3.5.3 21:30 盤後定錨邏輯（已於 2026-07-04 手動驗證執行一次，因當日休市數據與前一日相同；正式交易日的盤後定錨情境仍待 Layer 4 實跑驗證；過程中發現並修正 WebFetch 查全市場大表格會編造數字的風險，見 ADR-003）
 - [x] UC-BJSPG 3.5.4 Markdown 報告格式（A/B/C/D 欄位、CASH_WARNING 警語）（已於 `0830_PRE.md` 驗證）
 - [x] UC-BJSPG 3.5.5 `reports/state.json` 狀態記錄與回補提示邏輯（已實跑驗證首次執行情境；回補分支邏輯待有實際「高位停利變現→低接」案例時再驗證）
 - [x] UC-BJSPG 3.5.7 關注清單管理（新增/移除標的、YouTube/新聞連結輸入）（`job/watchlist.json`、`job/inbox/links.md`，使用者手動編輯即可，無需額外指令）
@@ -42,3 +42,9 @@
 - [ ] Error path：模擬資料抓不到 → 報告正確標示「資料未取得」
 - [ ] Error path：模擬機器未開機/未登入 → 排程正確跳過不報錯
 - [ ] Error path：模擬訂閱額度不足 → 排程失敗即結束不重試
+
+## 待辦（遷移到常駐機器時一併處理）
+
+- [ ] `job/run_analysis.sh` 開頭加 `git pull`，避免遠端（如手機 dispatch）改的 `watchlist.json` 沒同步到常駐機器就被排程覆蓋
+- [ ] 建立 on-demand（非排程）RemoteTrigger routine：讓使用者離開電腦時可用手機口語告知「新增/移除追蹤股票」，routine 內容為 clone repo → 編輯 `job/watchlist.json` → commit → push
+- [ ] 確認上述兩項不影響現有 ADR-001 headless 權限設計（`run_analysis.sh` 本身不受 `--allowedTools` 限制，`git pull` 由 shell 執行，非 claude 工具）
