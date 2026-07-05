@@ -34,7 +34,7 @@
 - [x] UC-BJSPG 3.2.2 RWD 版面（手寫 CSS，flexbox + 表格 `overflow-x:auto`，支援淺色/深色模式）
 - [x] UC-BJSPG 3.2.3 決定 GitHub Pages 部署方式：**本機腳本（`web/deploy.sh`）+ 獨立 `gh-pages` orphan branch**，不用 GitHub Actions，與 `docs/` 專案文件互不衝突（見 ARCHITECTURE.md）
 - [x] UC-BJSPG 3.2.3 `web/deploy.sh` 已本機測試成功，`gh-pages` branch 已建立並 push 到 GitHub（已串接進 `job/run_analysis.sh`，每次報告 commit 後自動觸發）
-- [ ] UC-BJSPG 3.2.3 GitHub Pages 設定（repo Settings → Pages → Source: Deploy from branch → `gh-pages` / `/(root)`）——**需使用者手動至 GitHub 網頁設定一次**（沒有 `gh` CLI/API token 可自動化），設定後確認網址可上網瀏覽
+- [x] UC-BJSPG 3.2.3 GitHub Pages 設定完成，網址 https://blackjtsai.github.io/blackj-stock-point-guard/ 已可上網瀏覽，2026-07-05 以 WebFetch 確認首頁正確列出 2026-07-04 三份報告連結（PRE/MID/POST）
 
 ## Layer 4：端對端整合測試
 

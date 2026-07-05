@@ -17,10 +17,10 @@
 | UC-BJSPG 3.1.1 | 環境建置 | 專案骨架、GitHub repo、`.gitignore` | — | ✅ |
 | UC-BJSPG 3.1.2 | 本機排程設定 | 3 個 `launchd` plist | — | ⏳ |
 | UC-BJSPG 3.1.3 | Git 推送設定 | 本機 git 憑證、自動 commit+push | — | ⏳ |
-| UC-BJSPG 3.2 | WEB（前台） | — | — | ⏳ |
+| UC-BJSPG 3.2 | WEB（前台） | — | — | ✅ |
 | UC-BJSPG 3.2.1 | 報告列表頁 | `web/build.py` 產生 `index.html` | — | ✅ |
 | UC-BJSPG 3.2.2 | RWD 版面 | `web/build.py` 內建 CSS | — | ✅ |
-| UC-BJSPG 3.2.3 | GitHub Pages 部署 | `web/deploy.sh` + `gh-pages` branch（ADR-004） | — | ⏳ 機制完成並本機測試成功，待使用者手動開啟 GitHub Pages 設定 |
+| UC-BJSPG 3.2.3 | GitHub Pages 部署 | `web/deploy.sh` + `gh-pages` branch（ADR-004） | — | ✅ 已上線：https://blackjtsai.github.io/blackj-stock-point-guard/ |
 | UC-BJSPG 3.5 | JOB（排程分析） | — | — | ⏳ |
 | UC-BJSPG 3.5.1 | 08:30 盤前分析 | `job/` 分析流程 | — | ⏳ |
 | UC-BJSPG 3.5.2 | 12:30 盤中複核 | `job/` 分析流程 | — | ⏳ |
@@ -84,3 +84,4 @@ GitHub Pages 部署路徑已定案：本機腳本（`web/deploy.sh`）+ 獨立 `
 | v0.2 | 2026-07-04 | 新增第 6 節核心規則，作為下游程式的穩定引用點，取代直接引用需求文件章節編號 |
 | v0.3 | 2026-07-04 | 第 6.2 節新增「禁止查詢全市場總表」規則（ADR-003），修正 WebFetch 對大表格編造數字的風險 |
 | v0.4 | 2026-07-05 | UC-BJSPG 3.2.1／3.2.2 完成（`web/build.py`）；UC-BJSPG 3.2.3 部署路徑定案（ADR-004），待使用者手動開啟 GitHub Pages |
+| v0.5 | 2026-07-05 | UC-BJSPG 3.2.3 GitHub Pages 設定完成並上線，Layer 3（UC-BJSPG 3.2）全部完成 |

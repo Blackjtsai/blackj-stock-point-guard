@@ -10,7 +10,7 @@
 | Claude Code CLI | 已登入訂閱帳號（約 $20/月方案），headless 模式（`claude -p`）已驗證可用 | `claude --version` / `claude -p "..."` | ✅ |
 | Git | SSH 憑證（`~/.ssh/id_ed25519_github`），可直接 push | `ssh -T git@github.com` | ✅ |
 | GitHub Repo | Public repo 已建立，本機已 push 初始 commit | git@github.com:Blackjtsai/blackj-stock-point-guard.git | ✅ |
-| GitHub Pages | `gh-pages` branch 已建立並 push（`web/deploy.sh` 自動維護），但 Pages 發布來源尚未設定 | 見下方「GitHub Pages 手動設定」 | ❌ |
+| GitHub Pages | Source: Deploy from a branch → `gh-pages` / `/(root)`，已上線 | https://blackjtsai.github.io/blackj-stock-point-guard/ | ✅ |
 
 ## 安裝步驟（全部已完成）
 
@@ -19,16 +19,9 @@
 3. ~~建立 3 個 `launchd` plist~~ — 已建立於 `job/launchd/`，並複製到 `~/Library/LaunchAgents/`；僅週一至週五觸發（`StartCalendarInterval` 為 Weekday 1～5 的陣列），週末不執行
 4. ~~`launchctl load` 註冊排程~~ — 已註冊並手動測試一次成功
 
-## GitHub Pages 手動設定（待辦，僅需一次）
+## GitHub Pages（已設定完成）
 
-沒有 `gh` CLI 或 API token，無法用指令自動開啟 GitHub Pages，需使用者手動操作：
-
-1. 開啟 https://github.com/Blackjtsai/blackj-stock-point-guard/settings/pages
-2. 「Build and deployment」→「Source」選 **Deploy from a branch**
-3. 「Branch」選 **`gh-pages`**，資料夾選 **`/ (root)`**，儲存
-4. 等 1-2 分鐘後，網址（GitHub 會顯示，通常是 `https://blackjtsai.github.io/blackj-stock-point-guard/`）應可看到報告列表頁
-
-設定完成後，之後每次 `job/run_analysis.sh` 執行完會自動更新 `gh-pages` branch 內容，網頁跟著自動刷新，不需要重複設定。
+2026-07-05 使用者已於 GitHub 網頁完成設定（Source: Deploy from a branch → `gh-pages` / `/(root)`），並以 WebFetch 確認首頁正確顯示 2026-07-04 三份報告連結。之後每次 `job/run_analysis.sh` 執行完會自動更新 `gh-pages` branch 內容，網頁跟著自動刷新，不需要重複設定。
 
 ## 服務啟動
 

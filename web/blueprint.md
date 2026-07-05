@@ -1,6 +1,6 @@
 # Blueprint — WEB（前台 Dashboard）（UC-BJSPG 3.2）
 
-> 版本：v0.2 ／ 最後更新：2026-07-05
+> 版本：v0.3 ／ 最後更新：2026-07-05
 
 ## 技術棧
 
@@ -45,7 +45,7 @@ index.html                       # 首頁，依日期新到舊列出報告連結
 
 | Layer | UC 範圍 | 狀態 |
 |---|---|---|
-| Layer 3 | UC-BJSPG 3.2.1 ～ 3.2.3 | ⏳ 程式與本機測試皆完成，待使用者手動於 GitHub Settings → Pages 選擇 `gh-pages` / root 一次 |
+| Layer 3 | UC-BJSPG 3.2.1 ～ 3.2.3 | ✅ 已上線：https://blackjtsai.github.io/blackj-stock-point-guard/ |
 
 ## 關鍵業務約束
 
