@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-07-06 重點摘要 lightbox + 延續數據表機制（ADR-005），修正 dark mode CSS bug
+
+- 使用者反映前台報告頁面 dark mode 對比度差、看不清楚；追查發現根因是 CSS 撰寫順序 bug：`@media (prefers-color-scheme: dark)` 覆寫區塊寫在對應淺色樣式「之前」，同優先權下被後面的淺色規則蓋掉，導致 `blockquote` 等元素的深色覆寫從未真正生效。修正為統一移到 CSS 檔案最後，並用 Playwright 實際截圖驗證 light/dark 兩種模式皆正常
+- 新增每份報告頁面的「📊 重點摘要」按鈕（純 CSS checkbox-hack，維持無 JS 設計），跳出 lightbox 列出關注股卡片：代號/名稱、建議動作徽章（金字塔低接＝綠／觀望看戲＝灰／高位停利變現＝紅）、收盤價、第一批限價
+- 發現 08:30 PRE 報告資料完整，但 12:30 MID 缺限價區間、21:30 POST 連股價都沒有；使用者確認要修，選擇「擴充 `state.json`」而非「直接讀即時狀態」（後者會讓 `build.py` 每次全量重建歷史頁面時被之後的狀態覆寫，等同竄改歷史紀錄）
+- **執行高強度（high）code review 時，8 角度之一（altitude）指出更根本的問題**：原設計讓無人值守的 headless LLM 自己在報告內文手寫「延續數據表」，屬於純機械轉錄工作卻交給格式可靠度最低的環節負責，格式一旦漂移 `web/build.py` 就會抓錯或抓不到，且無錯誤訊號——與 ADR-001「git commit/push 不假手 claude」是同一類風險，但當初沒有把這個原則延伸到報告格式本身
+- 修正：新增 `job/append_continuity_table.py`（純 Python 決定性腳本），由 `job/run_analysis.sh` 在 `claude -p` 執行完、`git commit` 前呼叫，讀 `reports/state.json` + `job/watchlist.json` 決定性產出「延續數據表」（人讀 Markdown 表格 + 機器可讀 `<!-- BJSPG_CONTINUITY: {json} -->` 註解），LLM 只需把 `last_price`/`limit_range` 寫進 `state.json`，不用自己排版；`web/build.py` 改用 `json.loads()` 直接解析該註解，不再靠正則猜測表格內容，並修正 `markdown_to_html()` 讓單行 HTML 註解不會顯示在頁面上
+- Code review 另找出並修復：3 處表格解析邏輯重複（抽出 `parse_pipe_rows`/`find_pipe_table` 共用函式）、`web/build.py` 檔頭修改日期未同步更新
+- **意外插曲**：撰寫過程中，2026-07-06（週一，正式交易日）08:00 的 launchd PRE 排程真的觸發了，其 `run_analysis.sh` 的 `git add -A` 把當時尚在進行中的所有編輯（含本次的架構修訂）連同真實報告一起打包進自動 commit `4dcefdb`（訊息看起來只是例行報告 commit，實際內容涵蓋整個 ADR-005 修訂）；確認已 push 到 `origin/main` 不宜 amend，故不重新 commit 同一批異動，僅將後續補充（回填今日報告的延續數據表、文件同步）另開新 commit。這也是「排程自動 commit ≠ 執行過 `/checkpoint`」規範的又一個實例
+- 用最終版腳本回填今天真實的 `reports/2026-07-06/0800_PRE.md`，補上延續數據表（資料取自當時已寫入 `state.json` 的真實查證數字，非杜撰），重新 `web/deploy.sh` 部署並以 curl／raw GitHub 內容確認正確
+- `docs/design/SDD.md` 6.5 節同步修訂為最終機制（v0.7→v0.8），`ADR-005` 補上修訂記錄段落，`job/blueprint.md`、`web/blueprint.md` 同步更新
+
 ## 2026-07-05 Layer 3 前台 Dashboard 實作（跳過 Layer 2 gate，ADR-004）
 
 - 使用者確認 Layer 2 手動驗證已足夠，指示跳過「上一 Layer 全部 `[x]` 才能開新 Layer」的 gate，直接開始 Layer 3（UC-BJSPG 3.2.1 ～ 3.2.3）

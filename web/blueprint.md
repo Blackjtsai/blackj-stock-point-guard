@@ -1,6 +1,6 @@
 # Blueprint — WEB（前台 Dashboard）（UC-BJSPG 3.2）
 
-> 版本：v0.4 ／ 最後更新：2026-07-06
+> 版本：v0.5 ／ 最後更新：2026-07-06
 
 ## 技術棧
 
@@ -34,13 +34,14 @@ index.html                       # 首頁，依日期新到舊列出報告連結
 | 首頁 | 依日期列出已產出報告（PRE/MID/POST），簡單列表，最新在最上 |
 | 報告頁 | 單篇報告轉出的 HTML，含「回首頁」連結；上方另有「📊 重點摘要」按鈕 |
 
-## 重點摘要 lightbox（2026-07-06 新增）
+## 重點摘要 lightbox（2026-07-06 新增，同日修訂擷取機制）
 
 - 純 CSS checkbox-hack 實作（隱藏 checkbox + label 觸發），維持「無 JS」設計原則
-- 內容來源：該報告自己的「建議動作彙整表」（代號/名稱/建議動作/備註）+「延續數據表」（收盤價/第一批限價，見 SDD.md 6.5、ADR-005）
-- 擷取邏輯（`web/build.py`）：`extract_stock_summary()` 找建議動作彙整表；`extract_continuity_table()` 優先找新格式延續數據表；找不到（相容 2026-07-04 尚未套用 6.5 規範的舊報告）才 fallback 到 `extract_stock_detail()` 逐段落最佳猜測擷取
+- 內容來源：該報告自己的「建議動作彙整表」（代號/名稱/建議動作/備註）+ `job/append_continuity_table.py` 決定性附加的「延續數據表」（收盤價/第一批限價，見 SDD.md 6.5、ADR-005）
+- 擷取邏輯（`web/build.py`）：`extract_stock_summary()` 找建議動作彙整表；`extract_continuity_table()` 直接 `json.loads()` 解析附加在報告末尾的 `<!-- BJSPG_CONTINUITY: {...} --> ` 機器可讀註解；找不到（相容尚未套用此機制的舊報告）才 fallback 到 `extract_stock_detail()` 逐段落最佳猜測擷取
 - 建議動作徽章顏色：金字塔低接＝綠、觀望看戲＝灰、高位停利變現＝紅
 - 資料完全來自該報告自己的已寫死文字內容，不讀即時的 `reports/state.json`（避免歷史頁面重建時被之後的狀態覆寫，見 ADR-005）；擷取不到的欄位一律省略，不臆測填值
+- `markdown_to_html()` 會略過單行 HTML 註解（`<!-- ... -->`），所以機器可讀的 JSON 註解不會顯示在頁面上
 
 ## 部署機制
 
