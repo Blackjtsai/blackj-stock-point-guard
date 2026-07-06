@@ -25,6 +25,8 @@
 - [x] UC-BJSPG 3.5.4 Markdown 報告格式（A/B/C/D 欄位、CASH_WARNING 警語）（已於 `0830_PRE.md` 驗證）
 - [x] UC-BJSPG 3.5.5 `reports/state.json` 狀態記錄與回補提示邏輯（已實跑驗證首次執行情境；回補分支邏輯待有實際「高位停利變現→低接」案例時再驗證）
 - [x] UC-BJSPG 3.5.7 關注清單管理（新增/移除標的、YouTube/新聞連結輸入）（`job/watchlist.json`、`job/inbox/links.md`，使用者手動編輯即可，無需額外指令）
+- [-] UC-BJSPG 3.5.6 除權除息查證補強：新增 TWSE 官方除權除息預告表 API（`TWT48U`）查證步驟；法人數據備援順序明確化，禁止以 `T86`/`TWT44U` 全市場表當備援（實測不支援單一代號篩選，且 `TWT48U` 本身也是近 300 筆的大表格，一併補上逐列比對代號的查詢要求）（2026-07-06 規則已寫定，見 SDD v0.9）；**進行中，待下次排程實跑驗證 LLM 確實依新規則查證**
+- [-] UC-BJSPG 3.5.4 新增護盾續抱規則（SDD 6.6）：`job/holdings.local.json`（本機專用、未進版控）記錄真實成本價，安全墊 ≥5% 時 C 段預設不建議「高位停利變現」，除非大盤系統性崩盤（2026-07-06 規則已寫定）；**進行中，待下次 PRE/MID/POST 實跑驗證規則確實套用後才標記完成**
 
 ## Layer 3：前台 Dashboard（UC-BJSPG 3.2.1 ～ 3.2.3）
 
@@ -51,3 +53,4 @@
 - [ ] `job/run_analysis.sh` 開頭加 `git pull`，避免遠端（如手機 dispatch）改的 `watchlist.json` 沒同步到常駐機器就被排程覆蓋
 - [ ] 建立 on-demand（非排程）RemoteTrigger routine：讓使用者離開電腦時可用手機口語告知「新增/移除追蹤股票」，routine 內容為 clone repo → 編輯 `job/watchlist.json` → commit → push
 - [ ] 確認上述兩項不影響現有 ADR-001 headless 權限設計（`run_analysis.sh` 本身不受 `--allowedTools` 限制，`git pull` 由 shell 執行，非 claude 工具）
+- [ ] `job/holdings.local.json`（本機專用、未進版控，見 ADR-006）不會隨 `git pull` 同步到常駐機器，需要決定手動搬移方式或另建私有同步機制

@@ -8,6 +8,7 @@ graph TD
     C -->|WebSearch/WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
     WL[job/watchlist.json<br/>關注股清單] -->|讀取| C
     IB[job/inbox/links.md<br/>YouTube/新聞連結] -->|讀取/標記已處理| C
+    HL[job/holdings.local.json<br/>真實成本價<br/>本機專用/未進版控] -->|唯讀| C
     C -->|讀寫| S[reports/state.json<br/>建議歷史狀態]
     C -->|寫入| R[reports/YYYY-MM-DD/*.md<br/>分析報告]
     R -->|git commit + push| G[GitHub Repo<br/>main branch]
@@ -34,6 +35,7 @@ graph TD
 
 - `reports/{YYYY-MM-DD}/{HHMM}_{PRE|MID|POST}.md` — 每次排程產出的分析報告
 - `reports/state.json` — 記錄每檔關注股最近一次建議動作，供回補提示比對用。每檔股票欄位：`name`、`last_action`、`last_action_time`、`last_report`、`pending_rebuy`，以及 2026-07-05 新增的 `last_price`（最近查證收盤價）、`limit_range`（金字塔限價低接第一批區間）——後兩者供 MID/POST 報告撰寫「延續數據表」時讀取延續，讓前台重點摘要在非 PRE 報告也能顯示股價/限價（見 SDD.md 6.5、ADR-005）
+- `job/holdings.local.json`（**本機專用，`.gitignore` 排除，不進 Git 歷史**）— 使用者真實持股快照：代號、股數、`cost_basis`（真實成本價），供護盾續抱規則使用（見 SDD.md 6.6、ADR-006）；此檔案不隨 `git pull` 同步到其他機器，遷移常駐機器時需手動另外處理
 - `gh-pages` branch（orphan，與 `main` 無共同歷史）— 只放 `web/build.py` 產生的靜態 HTML，GitHub Pages 直接從此 branch 的 root 發布
 
 ## 前台網頁部署機制（Layer 3 定案）

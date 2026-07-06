@@ -5,3 +5,4 @@
 .claude/scheduled_tasks.lock
 .gh-pages-worktree/
 __pycache__/
+job/holdings.local.json

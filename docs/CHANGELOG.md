@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-07-06 護盾續抱規則（ADR-006）與資料查證流程補強，查核 0800_PRE 報告優化指示
+
+- 使用者對 0800_PRE 報告提出三點優化指示：(1) 質疑英業達(2356) 除息日/股利數字為幻覺 (2) 要求對真實持股套用「成本護盾」邏輯避免短線散戶思維過早停利 (3) 質疑大聯大(3702) 法人數據又缺失、要求補 TWSE T86 備援。逐項查核後動手實作，過程中修正了使用者的兩個錯誤前提，未盲目照單全收：
+  - **(1) 查核結果：不是幻覺**。直接 curl TWSE 官方除權除息預告表 API（`https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json`）驗證，2356 確實登記 115/07/15 除息、現金股利 2.00 元，與報告一致。但排程流程本身沒有查證步驟，這次只是剛好蒙對，屬於流程缺口而非結果錯誤——已補上正式查證步驟。
+  - **(3) 查核結果：不是本次報告的問題**。翻歷史報告確認「上緯投控」誤標事件發生在 2026-07-04，當天 21:30 POST 報告已修復；2026-07-06 報告本身法人數據是完整的。使用者提議的「T86 備援」方向也證實不可行：實測 `T86`（`selectType` 僅接受預設分類值）與 `TWT44U`（`stockNo` 參數對回傳內容無效）皆不支援單一代號篩選，改用等於重踩 ADR-003 已修好的坑；改為明訂備援順序為 Yahoo 個股頁 → `finance.yahoo.com` 個股頁 → 才標示「資料未取得」，任何情況不得退回全市場總表。
+  - **(2) 查核結果：方向合理，但需使用者決定兩件事**——用 `AskUserQuestion` 確認：3702 真實成本價是 $110（沿用 2026-07-06 券商截圖 memory）而非訊息中提到的 $106.75；真實成本價存放位置選「本機、不進版控」而非寫進 Public repo（該 repo 已公開股票代號，但使用者不接受成本/未實現損益也公開）。
+- 新增 `job/holdings.local.json`（`.gitignore` 排除，不進版控）存放真實持股成本快照；新增 `docs/design/SDD.md` 第 6.6 節「護盾續抱規則」：安全墊 `(現價-cost_basis)/cost_basis ≥5%` 時 C 段預設不給「高位停利變現」，除非大盤系統性崩盤（TWII 單日跌幅≥3% 或 SOX 單日重挫≥5% 且台股同步走弱）；6.2 節新增除權息官方查證來源與法人數據備援順序（禁止退回全市場總表）
+- 新增 `docs/decisions/ADR-006-cost-basis-shield-rule.md` 完整記錄決策脈絡；`docs/decisions/ADR-003-avoid-full-market-table-fetch.md` 追記 T86/TWT44U 不支援單一代號篩選的實測結果，回答當初留下的開放問題
+- 同步更新 `job/blueprint.md`（v0.8→v0.9）、`job/prompts/{PRE,MID,POST}.md`、`docs/design/ARCHITECTURE.md`（Mermaid 圖與資料 Schema 新增 `holdings.local.json`）、`docs/TODO.md`（新增待驗證項目、遷移常駐機器待辦補一項）
+- 尚未驗證：這些規則要等下一次排程實跑（08:00/12:30/21:30）才能確認 LLM 是否真的照做，已在 `docs/TODO.md` 標記
+
 ## 2026-07-06 重點摘要 lightbox + 延續數據表機制（ADR-005），修正 dark mode CSS bug
 
 - 使用者反映前台報告頁面 dark mode 對比度差、看不清楚；追查發現根因是 CSS 撰寫順序 bug：`@media (prefers-color-scheme: dark)` 覆寫區塊寫在對應淺色樣式「之前」，同優先權下被後面的淺色規則蓋掉，導致 `blockquote` 等元素的深色覆寫從未真正生效。修正為統一移到 CSS 檔案最後，並用 Playwright 實際截圖驗證 light/dark 兩種模式皆正常

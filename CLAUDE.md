@@ -155,10 +155,10 @@
 ## 關鍵業務約束
 
 - 不碰選擇權，只做現股部位判斷
-- 不連接券商 API，不追蹤真實庫存與真實 T+2 交割款，所有建議僅供參考
+- 不連接券商 API，不追蹤真實庫存與真實 T+2 交割款，所有建議僅供參考。**例外**：`job/holdings.local.json`（本機專用，未進版控）記錄的真實成本價，用於 SDD.md 第 6.6 節「護盾續抱規則」——安全墊 ≥5% 時會實際改變 C 段建議動作標籤（不給「高位停利變現」，改為「觀望看戲」+ 護盾理據），不只是措辭調整；此例外不涉及真實庫存追蹤或下單（見 ADR-006）
 - 不自動下單，只出建議
 - 只給限價（Limit Order）建議，不給市價單追價建議
-- GitHub repo 為 Public，且股票代號不做隱碼處理（使用者已確認接受此取捨）
+- GitHub repo 為 Public，且股票代號不做隱碼處理（使用者已確認接受此取捨）；但真實成本價／未實現損益屬於更敏感的曝露程度，使用者未同意公開，故存放於 `.gitignore` 排除的本機檔案，不進版控（見 ADR-006）
 
 ## 測試規範（專案特有）
 
@@ -186,9 +186,10 @@ blackj-stock-point-guard/
 │   │   ├── TASK.md
 │   │   └── SDD.md
 │   └── decisions/
-│       └── ADR-000-template.md
+│       └── ADR-000-template.md、ADR-001～006-*.md
 ├── job/
-│   └── blueprint.md        # 排程分析邏輯（UC-BJSPG 3.5）
+│   ├── blueprint.md        # 排程分析邏輯（UC-BJSPG 3.5）
+│   └── holdings.local.json # 本機專用，未進版控：真實持股成本價（見 ADR-006）
 ├── web/
 │   └── blueprint.md        # 前台 Dashboard（UC-BJSPG 3.2）
 └── reports/                # Layer 2 開始後才產生，報告與 state.json
