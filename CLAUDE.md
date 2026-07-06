@@ -109,7 +109,7 @@
 | 層 | 技術 |
 |---|---|
 | 執行引擎 | Claude Code CLI（headless，`claude -p`），使用者自己的訂閱額度 |
-| 排程 | macOS `launchd`（3 個 plist：08:30 / 12:30 / 21:30） |
+| 排程 | macOS `launchd`（3 個 plist：08:00 / 12:30 / 21:30） |
 | 資料儲存 | Markdown 報告檔 + `reports/state.json` |
 | 前台 | 純 HTML / CSS / 少量原生 JS，無框架，RWD |
 | 版控與部署 | Git + GitHub Pages |

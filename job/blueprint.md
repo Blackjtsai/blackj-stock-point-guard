@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.6 ／ 最後更新：2026-07-05
+> 版本：v0.7 ／ 最後更新：2026-07-06
 
 ## 技術棧
 
@@ -9,7 +9,7 @@
 | 執行引擎 | Claude Code CLI（headless，`claude -p`） |
 | 觸發 | macOS `launchd`（3 個 plist） |
 | 資料來源 | WebSearch / WebFetch（證交所、Yahoo 奇摩股市、財經新聞等公開頁面） |
-| 狀態儲存 | `reports/state.json` |
+| 狀態儲存 | `reports/state.json`（每檔股票含 `name`／`last_action`／`last_action_time`／`last_report`／`pending_rebuy`／`last_price`／`limit_range`，後兩者為 2026-07-06 新增，見 ADR-005） |
 
 ## 目錄結構
 
@@ -19,13 +19,13 @@ job/
 ├── run_analysis.sh          # launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）；報告 commit/push 後觸發 web/deploy.sh 更新前台網頁
 ├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
 ├── launchd/                 # plist 原始檔（版控），實際註冊在 ~/Library/LaunchAgents/；僅週一至週五觸發
-│   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:30)
+│   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:00)
 │   ├── com.blackjtsai.bjspg.mid.plist   (平日 12:30)
 │   └── com.blackjtsai.bjspg.post.plist  (平日 21:30)
-├── prompts/                 # 各時段分析 prompt，皆含「資料正確性鐵律」
-│   ├── PRE.md               # 已實際跑過一次並成功產出報告
-│   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4
-│   └── POST.md               # 已於 2026-07-04 手動驗證執行一次（休市數據同前日），正式交易日情境待 Layer 4
+├── prompts/                 # 各時段分析 prompt，皆含「資料正確性鐵律」；三份皆須輸出「延續數據表」（SDD 6.5）供前台重點摘要讀取
+│   ├── PRE.md               # 已實際跑過一次並成功產出報告；計算完限價後寫回 state.json 的 last_price/limit_range
+│   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4；延續數據表待下次實跑驗證
+│   └── POST.md               # 已於 2026-07-04 手動驗證執行一次（休市數據同前日），正式交易日情境待 Layer 4；延續數據表待下次實跑驗證
 ├── inbox/
 │   └── links.md             # 使用者手動貼 YouTube/新聞連結，21:30 POST 讀取分析後標記已處理
 └── logs/                    # 執行 log，不進版控

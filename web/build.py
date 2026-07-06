@@ -5,7 +5,7 @@
 # 功能說明：掃描 reports/ 下所有 Markdown 報告，轉成靜態 HTML（含首頁列表），輸出到指定目錄供部署到 gh-pages branch
 # 所屬模組：web/（UC-BJSPG 3.2.1 ～ 3.2.2）
 # 建立日期：2026-07-05
-# 修改日期：2026-07-05
+# 修改日期：2026-07-06
 # 開發者　：Claude Code
 # ============================================================
 #
@@ -17,7 +17,10 @@
 # - 只支援本專案報告實際會用到的 Markdown 語法：標題、粗體、行內反引號、
 #   水平線、blockquote、有序/無序清單、表格。不追求通用 Markdown 相容性。
 
+from __future__ import annotations
+
 import html
+import json
 import re
 import sys
 from pathlib import Path
@@ -147,13 +150,32 @@ def inline_md(text: str) -> str:
     return text
 
 
-def render_table(lines: list[str]) -> str:
-    """轉換一段 Markdown 表格（含表頭分隔線），回傳 <table> HTML；資料列欄位數不足/超出表頭時自動補齊/截斷，避免欄位錯位"""
-    rows = [
+def parse_pipe_rows(lines: list[str]) -> list[list[str]]:
+    """把一段 `|` 分隔的 Markdown 表格文字轉成儲存格二維陣列，自動濾掉表頭分隔線（`---`）那一行"""
+    return [
         [c.strip() for c in line.strip().strip("|").split("|")]
         for line in lines
         if not re.match(r"^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$", line)
     ]
+
+
+def find_pipe_table(lines: list[str], header_predicate) -> list[list[str]] | None:
+    """在整份文件的行陣列中找第一個表頭符合 header_predicate 的 `|` 表格區塊，回傳解析後的儲存格二維陣列；找不到回傳 None"""
+    for i, line in enumerate(lines):
+        if not header_predicate(line):
+            continue
+        j = i + 1
+        while j < len(lines) and lines[j].strip().startswith("|"):
+            j += 1
+        rows = parse_pipe_rows(lines[i:j])
+        if len(rows) >= 2:
+            return rows
+    return None
+
+
+def render_table(lines: list[str]) -> str:
+    """轉換一段 Markdown 表格（含表頭分隔線），回傳 <table> HTML；資料列欄位數不足/超出表頭時自動補齊/截斷，避免欄位錯位"""
+    rows = parse_pipe_rows(lines)
     if not rows:
         return ""
     head, *body = rows
@@ -178,6 +200,11 @@ def markdown_to_html(md_text: str) -> str:
         stripped = line.strip()
 
         if not stripped:
+            i += 1
+            continue
+
+        if re.match(r"^<!--.*-->$", stripped):
+            # 單行 HTML 註解（例如 append_continuity_table.py 附加的機器可讀 JSON 標記）不顯示在頁面上
             i += 1
             continue
 
@@ -251,32 +278,21 @@ def badge_class(action: str) -> str:
     return "badge-hold"
 
 
+def _is_action_summary_header(line: str) -> bool:
+    """判斷是否為「建議動作彙整表」的表頭：以代號/名稱開頭且含「建議」字樣，與 B 節籌碼表（代號/名稱/融資...）區分"""
+    return bool(re.match(r"^\s*\|\s*代號\s*\|\s*名稱\s*\|", line)) and "建議" in line
+
+
 def extract_stock_summary(md_text: str) -> list[dict]:
-    """擷取報告中「代號｜名稱｜...建議...」開頭的建議動作彙整表（每份報告固定會有這張表，與 B 節「代號｜名稱｜融資...」籌碼表用表頭含「建議」二字區分），回傳每檔標的的代號/名稱/建議動作/備註；找不到則回傳空清單"""
-    lines = md_text.splitlines()
-    for i, line in enumerate(lines):
-        if not re.match(r"^\s*\|\s*代號\s*\|\s*名稱\s*\|", line):
-            continue
-        if "建議" not in line:
-            continue
-        table_lines = [line]
-        j = i + 1
-        while j < len(lines) and lines[j].strip().startswith("|"):
-            table_lines.append(lines[j])
-            j += 1
-        rows = [
-            [c.strip() for c in l.strip().strip("|").split("|")]
-            for l in table_lines
-            if not re.match(r"^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$", l)
-        ]
-        if len(rows) < 2:
-            continue
-        stocks = []
-        for r in rows[1:]:
-            r = (r + [""] * 4)[:4]
-            stocks.append({"code": r[0], "name": r[1], "action": r[2], "note": r[3]})
-        return stocks
-    return []
+    """擷取報告中的建議動作彙整表，回傳每檔標的的代號/名稱/建議動作/備註；找不到則回傳空清單"""
+    rows = find_pipe_table(md_text.splitlines(), _is_action_summary_header)
+    if not rows:
+        return []
+    stocks = []
+    for r in rows[1:]:
+        r = (r + [""] * 4)[:4]
+        stocks.append({"code": r[0], "name": r[1], "action": r[2], "note": r[3]})
+    return stocks
 
 
 def extract_stock_detail(md_text: str, code: str) -> dict:
@@ -298,15 +314,31 @@ def extract_stock_detail(md_text: str, code: str) -> dict:
     return detail
 
 
+def extract_continuity_table(md_text: str) -> dict:
+    """擷取 `job/append_continuity_table.py` 附加的機器可讀 JSON 註解（`<!-- BJSPG_CONTINUITY: {...} -->`），回傳以代號為 key 的 {price, limit_range} dict；找不到或 JSON 損毀則回傳空 dict（相容尚未套用此機制的舊報告，不拋錯）"""
+    m = re.search(r"<!--\s*BJSPG_CONTINUITY:\s*(\{.*?\})\s*-->", md_text, re.S)
+    if not m:
+        return {}
+    try:
+        return json.loads(m.group(1))
+    except json.JSONDecodeError:
+        return {}
+
+
 def render_summary_modal(md_text: str) -> str:
-    """組出「重點摘要」按鈕 + lightbox（純 CSS checkbox-hack，不需要 JS）；報告沒有建議動作彙整表時回傳空字串，不顯示按鈕"""
+    """組出「重點摘要」按鈕 + lightbox（純 CSS checkbox-hack，不需要 JS）；報告沒有建議動作彙整表時回傳空字串，不顯示按鈕。收盤價/限價優先讀 `append_continuity_table.py` 寫入的 JSON 註解，舊報告沒有這個註解時 fallback 到逐段落最佳猜測擷取"""
     stocks = extract_stock_summary(md_text)
     if not stocks:
         return ""
 
+    continuity = extract_continuity_table(md_text)
+
     cards = []
     for s in stocks:
-        detail = extract_stock_detail(md_text, s["code"])
+        if continuity:
+            detail = continuity.get(s["code"], {"price": None, "limit_range": None})
+        else:
+            detail = extract_stock_detail(md_text, s["code"])
         head = (
             f'<div class="stock-card-head"><strong>{html.escape(s["code"])} {html.escape(s["name"])}</strong>'
             f'<span class="badge {badge_class(s["action"])}">{html.escape(s["action"])}</span></div>'

@@ -2,10 +2,10 @@
 # ============================================================
 # 檔案名稱：run_analysis.sh
 # 中文名稱：排程分析執行腳本
-# 功能說明：由 launchd 於排定時間呼叫，執行 claude headless 分析，若有檔案異動則 commit + push，並觸發前台網頁部署
+# 功能說明：由 launchd 於排定時間呼叫，執行 claude headless 分析，附加延續數據表，若有檔案異動則 commit + push，並觸發前台網頁部署
 # 所屬模組：job/
 # 建立日期：2026-07-04
-# 修改日期：2026-07-05
+# 修改日期：2026-07-06
 # 開發者　：Claude Code
 # ============================================================
 #
@@ -54,6 +54,19 @@ CLAUDE_EXIT=$?
 if [ "$CLAUDE_EXIT" -ne 0 ]; then
   echo "claude 執行失敗（exit ${CLAUDE_EXIT}），本次不重試，直接結束" >> "$LOG_FILE"
   exit 0
+fi
+
+# 決定性附加「延續數據表」（見 job/append_continuity_table.py、ADR-005），
+# 不假手 claude 排版；用檔名比對今天的報告，不寫死 HHMM（時段觸發時間可能調整）
+TODAY_REPORT_DIR="$PROJECT_DIR/reports/$(date '+%Y-%m-%d')"
+REPORT_FILE=$(ls -t "$TODAY_REPORT_DIR"/*"_${REPORT_TYPE}.md" 2>/dev/null | head -1)
+if [ -n "$REPORT_FILE" ]; then
+  python3 "$PROJECT_DIR/job/append_continuity_table.py" "$REPORT_FILE" >> "$LOG_FILE" 2>&1
+  if [ $? -ne 0 ]; then
+    echo "append_continuity_table.py 執行失敗，該份報告本次無延續數據表" >> "$LOG_FILE"
+  fi
+else
+  echo "找不到今天的 ${REPORT_TYPE} 報告檔案，略過延續數據表附加" >> "$LOG_FILE"
 fi
 
 PUSHED=0
