@@ -15,6 +15,7 @@
 - [x] UC-BJSPG 3.1.2 撰寫 3 個 `launchd` plist（08:30 / 12:30 / 21:30），已 `launchctl load` 並用 `job/run_analysis.sh` 手動測試通過（headless 執行 + log + 自動 commit/push 皆正常）
 - [x] UC-BJSPG 3.1.2 確認 `claude` CLI 可 headless 執行並使用訂閱帳號額度（`claude -p` 已測試成功）
 - [x] UC-BJSPG 3.1.3 確認本機 git 憑證可直接 push（改用 SSH remote，已 push 成功）
+- [x] 2026-07-07：排程實際執行機制確認已全面改為 Claude Code 雲端 Routines（`BJSPG-PRE-0800`／`BJSPG-MID-1230`／`BJSPG-POST-2130`），本機 `launchd` + `run_analysis.sh` 停用，文件同步更新，見 ADR-007
 
 ## Layer 2：分析與報告產出邏輯（UC-BJSPG 3.5.1 ～ 3.5.6）
 
@@ -45,12 +46,17 @@
 - [ ] 實際跑一次 21:30 排程，確認盤後定錨與明日規劃
 - [ ] 確認前台 GitHub Pages 可看到當日三份報告（2026-07-06 目前僅 PRE，等 MID/POST 觸發後再確認）
 - [ ] Error path：模擬資料抓不到 → 報告正確標示「資料未取得」
-- [ ] Error path：模擬機器未開機/未登入 → 排程正確跳過不報錯
+- [ ] Error path：模擬機器未開機/未登入 → 排程正確跳過不報錯（本機 launchd 時期情境，已停用，見 ADR-007，此項可能不再適用）
 - [ ] Error path：模擬訂閱額度不足 → 排程失敗即結束不重試
+- [-] Error path：雲端 Routine sandbox 網路故障 / git push 失敗 → 排程正確不重試、不深入除錯地結束。2026-07-06 21:30 POST 撞上此情境，Routine 卡在自行除錯 GPG 簽名／GitHub MCP 權限，耗費大量 tool call 後仍未 push 成功，該份報告確認遺失（不回溯補產出，見 ADR-007）；已在 `job/prompts/{PRE,MID,POST}.md` 補上版本控制段落（失敗即停止、不重試、不深入除錯），待下次真的撞到網路故障時驗證是否確實乾淨結束
 
-## 待辦（遷移到常駐機器時一併處理）
+## 待辦：GitHub App 整合權限（見 ADR-007）
 
-- [ ] `job/run_analysis.sh` 開頭加 `git pull`，避免遠端（如手機 dispatch）改的 `watchlist.json` 沒同步到常駐機器就被排程覆蓋
+- [ ] 到 GitHub 網頁把 Routine 用的 GitHub App 整合權限從 Read-only 改成 **Contents: Read and write**，否則 `git push` 撞網路故障時，MCP push 這條備援路徑也走不通（僅使用者可操作，Claude Code 無法代為完成）
+
+## 待辦（原「遷移到常駐機器時」清單，前提是本機 launchd；現已全面改雲端 Routines，下列項目需重新檢視是否仍適用，見 ADR-007）
+
+- [ ] ~~`job/run_analysis.sh` 開頭加 `git pull`~~ — 腳本已停用，若要避免 watchlist.json 衝突，需改成在各 `job/prompts/*.md` 開頭指示 Routine 自己 `git pull`
 - [ ] 建立 on-demand（非排程）RemoteTrigger routine：讓使用者離開電腦時可用手機口語告知「新增/移除追蹤股票」，routine 內容為 clone repo → 編輯 `job/watchlist.json` → commit → push
-- [ ] 確認上述兩項不影響現有 ADR-001 headless 權限設計（`run_analysis.sh` 本身不受 `--allowedTools` 限制，`git pull` 由 shell 執行，非 claude 工具）
-- [ ] `job/holdings.local.json`（本機專用、未進版控，見 ADR-006）不會隨 `git pull` 同步到常駐機器，需要決定手動搬移方式或另建私有同步機制
+- [ ] ~~確認上述兩項不影響現有 ADR-001 headless 權限設計~~ — ADR-001 的權限假設已被 ADR-007 架空（雲端 Routine 現在本來就有 Bash/git 能力），需另外重新評估
+- [ ] `job/holdings.local.json`（本機專用、未進版控，見 ADR-006）不會隨雲端 Routine 的 git 操作同步到任何本機，需要決定手動維護方式或另建私有同步機制

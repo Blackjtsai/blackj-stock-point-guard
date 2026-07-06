@@ -30,4 +30,7 @@
 2. 用 Write 工具寫入：`reports/{今天日期}/2130_POST.md`。
 3. 更新 `reports/state.json`：寫入每檔股票今日最終建議動作、時間戳、待回補標記；若建議動作有調整，`limit_range` 同步更新，若本次有查到新報價則同步更新 `last_price`。
 4. 若第 2 步有更新 `job/inbox/links.md`，記得用 Edit 工具把處理過的連結標記回存。
-5. 完成後只需簡短回覆一行「已產出 2130_POST 報告」。
+5. 用 Bash 執行 `git add -A && git commit -m "job: POST 報告 {YYYY-MM-DD HH:MM}"`（日期時間用系統環境的當前時間）；若 `git status --porcelain` 顯示無任何異動，跳過本節其餘步驟。
+6. 用 Bash 執行 `git push`。**若失敗**（網路錯誤、逾時、403 等任何非零 exit code）：**不重試（最多嘗試一次）、不深入除錯**（不檢查 GPG/SSH 簽名、不測試 GitHub MCP 或其他 push 管道），直接停止本節其餘步驟——已寫入的本地 commit 原地保留、不修改不還原，下次排程觸發時會自動接續處理，本次報告視為當次遺失，不需要現在解決（見 ADR-007）。
+7. 若第 6 步 `git push` 成功，接著用 Bash 執行 `bash web/deploy.sh` 更新前台網頁；若這步失敗，同樣不重試，直接視為完成。
+8. 完成後只需簡短回覆一行：push 成功回「已產出 2130_POST 報告」；push 失敗回「已產出 2130_POST 報告但 git push 失敗（已保留本地 commit）」。

@@ -4,21 +4,23 @@
 
 ```mermaid
 graph TD
-    L[launchd 排程<br/>平日 08:00 / 12:30 / 21:30] -->|headless 呼叫| C[claude CLI<br/>分析流程]
-    C -->|WebSearch/WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
+    L[Claude Code 雲端 Routines<br/>claude.ai/code，平日 08:00 / 12:30 / 21:30<br/>見 ADR-007] -->|agentic session| C[Claude Code<br/>分析 + git 操作]
+    C -->|WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
     WL[job/watchlist.json<br/>關注股清單] -->|讀取| C
     IB[job/inbox/links.md<br/>YouTube/新聞連結] -->|讀取/標記已處理| C
     HL[job/holdings.local.json<br/>真實成本價<br/>本機專用/未進版控] -->|唯讀| C
     C -->|讀寫| S[reports/state.json<br/>建議歷史狀態]
     C -->|寫入| R[reports/YYYY-MM-DD/*.md<br/>分析報告]
-    R -->|git commit + push| G[GitHub Repo<br/>main branch]
-    R -->|觸發| B[web/deploy.sh<br/>build.py 轉 HTML]
+    C -->|自行 git commit + push<br/>失敗即結束不重試，見 ADR-007| G[GitHub Repo<br/>main branch]
+    G -->|觸發| B[web/deploy.sh<br/>build.py 轉 HTML]
     B -->|git push| GP[gh-pages branch<br/>orphan，僅靜態檔案]
     GP -->|GitHub Pages| W[靜態前台網頁<br/>RWD]
     U[使用者] -->|瀏覽器查看| W
     U -->|手動編輯新增/移除標的、貼連結| WL
     U -->|手動編輯新增/移除標的、貼連結| IB
 ```
+
+> `job/run_analysis.sh`、`job/launchd/*.plist`（本機 launchd 呼叫 headless `claude -p`）為原始設計，現已停用、僅存檔案作歷史紀錄，實際排程改為上圖的雲端 Routines（見 ADR-007）。`web/deploy.sh` 原本由 `run_analysis.sh` 在 push 成功後自動呼叫；現在改由雲端 Routine 自己在 `git push` 成功後執行同一支腳本（見 `job/prompts/*.md` 版本控制段落），行為與原設計一致，只是呼叫者從外層 shell 腳本換成 Routine 本身。
 
 ## Layer 驗收狀態
 

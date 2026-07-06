@@ -83,8 +83,9 @@
 本專案沒有傳統意義上的單元測試套件（核心邏輯是 Claude Code 於排程時即席分析，非固定演算法）。驗收改以 **Layer 4 端對端整合測試** 取代：實際跑三個排程時間點，確認報告產出、狀態檔更新、git push、前台顯示皆正確，並涵蓋以下 error path：
 
 1. 資料抓不到 / 來源矛盾 → 報告該欄位明確標示「資料未取得」，不得捏造數字
-2. 排程觸發時電腦未開機／未登入 → 該次排程直接跳過，不重試不報錯
+2. 排程觸發時電腦未開機／未登入 → 該次排程直接跳過，不重試不報錯（本機 launchd 時期的情境，已停用，見 ADR-007）
 3. 排程觸發時 Claude 訂閱用量不足 → 該次排程失敗即結束，不重試
+4. 雲端 Routine sandbox 網路故障或 git push 失敗 → 直接結束，不重試、不深入除錯（不查簽名、不測 MCP 權限、不改道其他 push 管道），本地已寫的 commit 留給下次排程接續，本次報告視為遺失（見 ADR-007）
 
 ## 資料表設計規範
 
@@ -97,7 +98,7 @@
 ## 專案快照
 
 **BLACKJ-STOCK-POINT-GUARD（黑暗傑客股市控球後衛，代號 BJSPG）**
-個人使用的台股現股買賣建議輔助系統。本機排程於每日固定時間點呼叫 Claude Code 分析公開市場資料，產出買賣建議報告，並透過靜態網頁前台瀏覽歷史紀錄。不連接券商、不自動下單，所有決策由使用者本人執行。
+個人使用的台股現股買賣建議輔助系統。Claude Code 雲端 Routines 於每日固定時間點分析公開市場資料，產出買賣建議報告，並透過靜態網頁前台瀏覽歷史紀錄。不連接券商、不自動下單，所有決策由使用者本人執行。
 
 參考文件：
 - `docs/design/SDD.md` — 系統設計說明書（含 UC 清單）
@@ -108,8 +109,8 @@
 
 | 層 | 技術 |
 |---|---|
-| 執行引擎 | Claude Code CLI（headless，`claude -p`），使用者自己的訂閱額度 |
-| 排程 | macOS `launchd`（3 個 plist：08:00 / 12:30 / 21:30） |
+| 執行引擎 | Claude Code 雲端 Routines（claude.ai/code agentic session），使用者自己的訂閱額度；本機 launchd + headless `claude -p` 為原始設計，已停用（見 ADR-007） |
+| 排程 | claude.ai/code Routines（`BJSPG-PRE-0800`／`BJSPG-MID-1230`／`BJSPG-POST-2130`，Weekdays，即平日 08:00 / 12:30 / 21:30） |
 | 資料儲存 | Markdown 報告檔 + `reports/state.json` |
 | 前台 | 純 HTML / CSS / 少量原生 JS，無框架，RWD |
 | 版控與部署 | Git + GitHub Pages |
@@ -118,7 +119,7 @@
 ## 必備技能
 
 - `/checkpoint` — **必備**，每次對話結束前執行（commit + push + 累積開發經驗）
-- `/checkservice` — 本專案無需。沒有常駐 Web server / DB / Queue，`launchd` 排程註冊一次後自行觸發，就緒狀態直接查 `docs/SETUP.md`
+- `/checkservice` — 本專案無需。沒有常駐 Web server / DB / Queue，排程為 claude.ai/code Routines 自行觸發，就緒狀態直接查 `docs/SETUP.md`
 
 ## 實作順序（嚴格遵守，未驗收不動下一層）
 
@@ -186,7 +187,7 @@ blackj-stock-point-guard/
 │   │   ├── TASK.md
 │   │   └── SDD.md
 │   └── decisions/
-│       └── ADR-000-template.md、ADR-001～006-*.md
+│       └── ADR-000-template.md、ADR-001～007-*.md
 ├── job/
 │   ├── blueprint.md        # 排程分析邏輯（UC-BJSPG 3.5）
 │   └── holdings.local.json # 本機專用，未進版控：真實持股成本價（見 ADR-006）
