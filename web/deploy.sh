@@ -19,8 +19,15 @@
 
 set -uo pipefail
 
-PROJECT_DIR="/Users/blackjtsai/Documents/blackj-stock-point-guard"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKTREE_DIR="$PROJECT_DIR/.gh-pages-worktree"
+
+# Windows 的 python3 有時只是 Microsoft Store 的空殼指令，實測會靜默失敗；
+# 找得到真正可執行的 python3 才用，否則退回 python（見 ADR-007 本機備援排程）
+PYTHON_BIN="python3"
+if ! python3 -c "" >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+fi
 
 cd "$PROJECT_DIR" || exit 1
 
@@ -42,7 +49,7 @@ if [ ! -d "$WORKTREE_DIR" ]; then
   fi
 fi
 
-python3 "$PROJECT_DIR/web/build.py" "$WORKTREE_DIR" || {
+"$PYTHON_BIN" "$PROJECT_DIR/web/build.py" "$WORKTREE_DIR" || {
   echo "web/build.py 執行失敗，略過本次 commit/push" >&2
   exit 1
 }

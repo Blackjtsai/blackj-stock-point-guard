@@ -30,7 +30,8 @@
 1. 依 `docs/design/SDD.md` 第 6.3 節欄位規範撰寫報告，C 段建議動作要明確寫「維持早盤建議」或「調整為：xxx（含原因）」。若某代號因 SDD 6.6 護盾續抱規則而被擋下「高位停利變現」，必須在該代號 C 段明確寫出「護盾續抱」與安全墊百分比，不能只寫「維持早盤建議」而不交代原因。**不需要自己另外組「延續數據表」**——只要 `last_price`／`limit_range` 有正確寫進 `reports/state.json`（見下方第 3 點），該表格會由 `job/append_continuity_table.py` 自動決定性附加，不假手你排版（見 ADR-005）。
 2. 用 Write 工具寫入：`reports/{今天日期}/1230_MID.md`。
 3. 若建議有調整，同步更新 `reports/state.json` 對應標的的建議動作與 `limit_range`；不論建議是否調整，只要本次有查到新報價，都同步更新該標的的 `last_price`（僅記錄延遲報價快照，不代表即時 tick，不影響「不追蹤即時大單」的既有限制）。
-4. 用 Bash 執行 `git add -A && git commit -m "job: MID 報告 {YYYY-MM-DD HH:MM}"`（日期時間用系統環境的當前時間）；若 `git status --porcelain` 顯示無任何異動，跳過本節其餘步驟。
-5. 用 Bash 執行 `git push`。**若失敗**（網路錯誤、逾時、403 等任何非零 exit code）：**不重試（最多嘗試一次）、不深入除錯**（不檢查 GPG/SSH 簽名、不測試 GitHub MCP 或其他 push 管道），直接停止本節其餘步驟——已寫入的本地 commit 原地保留、不修改不還原，下次排程觸發時會自動接續處理，本次報告視為當次遺失，不需要現在解決（見 ADR-007）。
-6. 若第 5 步 `git push` 成功，接著用 Bash 執行 `bash web/deploy.sh` 更新前台網頁；若這步失敗，同樣不重試，直接視為完成。
-7. 完成後只需簡短回覆一行：push 成功回「已產出 1230_MID 報告」；push 失敗回「已產出 1230_MID 報告但 git push 失敗（已保留本地 commit）」。
+4. 用 Bash 執行 `python3 job/append_continuity_table.py reports/{今天日期}/1230_MID.md`（若 `python3` 指令無效，改用 `python`）：把「延續數據表」決定性附加到報告檔案末尾，不假手你排版（見 ADR-005）。這一步失敗不影響報告本身，記錄後繼續下一步即可。
+5. 用 Bash 執行 `git add -A && git commit -m "job: MID 報告 {YYYY-MM-DD HH:MM}"`（日期時間用系統環境的當前時間）；若 `git status --porcelain` 顯示無任何異動，跳過本節其餘步驟。
+6. 用 Bash 執行 `git push`。**若失敗**（網路錯誤、逾時、403 等任何非零 exit code）：**不重試（最多嘗試一次）、不深入除錯**（不檢查 GPG/SSH 簽名、不測試 GitHub MCP 或其他 push 管道），直接停止本節其餘步驟——已寫入的本地 commit 原地保留、不修改不還原，下次排程觸發時會自動接續處理，本次報告視為當次遺失，不需要現在解決（見 ADR-007）。
+7. 若第 6 步 `git push` 成功，接著用 Bash 執行 `bash web/deploy.sh` 更新前台網頁；若這步失敗，同樣不重試，直接視為完成。
+8. 完成後只需簡短回覆一行：push 成功回「已產出 1230_MID 報告」；push 失敗回「已產出 1230_MID 報告但 git push 失敗（已保留本地 commit）」。
