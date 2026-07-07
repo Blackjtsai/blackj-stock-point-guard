@@ -23,6 +23,26 @@
 ## 待辦（見 ADR-007）
 
 - [ ] 到 GitHub 網頁，把 Routine 用的 GitHub App 整合權限從 Read-only 改成 **Contents: Read and write**，否則 `git push` 網路故障時，MCP push 這條備援路徑也無法作為替代方案
+- [ ] 雲端 Routine 網路/權限問題修好後，記得停用或刪除下方「本機臨時備援排程」，避免跟雲端 Routine 同一時段重複執行、重複 commit
+
+## 本機臨時備援排程（2026-07-07 新增，見 ADR-007）
+
+2026-07-06/07 雲端 Routine 同時撞上 sandbox 網路故障與 GitHub App 唯讀權限，PRE 之後的 MID/POST 皆卡住。在雲端問題修好前，於這台 Windows 機器（`D:\_claude-project\blackj-stock-point-guard`）額外註冊 3 個 **Windows工作排程器（Task Scheduler）** 任務作臨時備援，平日觸發：
+
+| 任務名稱 | 時間 | 對應腳本 |
+|---|---|---|
+| `BJSPG_PRE_Backup` | 平日 08:00 | `job/run_analysis_local_backup.sh PRE` |
+| `BJSPG_MID_Backup` | 平日 12:30 | `job/run_analysis_local_backup.sh MID` |
+| `BJSPG_POST_Backup` | 平日 21:30 | `job/run_analysis_local_backup.sh POST` |
+
+**前提**：這台電腦必須開機（不需登入使用者互動，Task Scheduler 預設可背景執行）。查詢/管理：
+
+```powershell
+Get-ScheduledTask -TaskName "BJSPG_*_Backup"
+Unregister-ScheduledTask -TaskName "BJSPG_PRE_Backup","BJSPG_MID_Backup","BJSPG_POST_Backup" -Confirm:$false  # 雲端修好後移除用
+```
+
+執行 log 位置：`job/logs/{PRE,MID,POST}.log`（不進版控）。`job/run_analysis_local_backup.sh` 與已停用的 `job/run_analysis.sh` 差異：路徑改為自動偵測（可跨機器搬），`python3` 在此機器上是 Microsoft Store 空殼指令會靜默失敗，已加上偵測後降級用 `python` 的邏輯。
 
 ## GitHub Pages（已設定完成）
 
