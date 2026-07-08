@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026-07-08 0800 盤前報告（PRE）</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+  line-height: 1.7;
+  background: #fafafa; color: #1a1a1a;
+}
+.container { max-width: 780px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.2rem; margin-top: 2em; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
+h3 { font-size: 1.05rem; margin-top: 1.5em; }
+a { color: #0645ad; text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+blockquote {
+  margin: 1em 0; padding: 8px 14px;
+  border-left: 4px solid #c00; background: #fff0f0;
+}
+code {
+  background: rgba(127,127,127,0.15);
+  padding: 1px 5px; border-radius: 4px;
+  font-size: 0.9em;
+}
+.table-wrap { overflow-x: auto; margin: 1em 0; }
+table { border-collapse: collapse; width: 100%; min-width: 320px; }
+th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; font-size: 0.95rem; }
+th { background: rgba(127,127,127,0.15); }
+.back-link { display: inline-block; margin-bottom: 1em; font-size: 0.9rem; }
+.index-date { margin-top: 1.6em; }
+.index-date h2 { margin-bottom: 0.4em; border: none; }
+.index-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; flex-wrap: wrap; }
+.index-list li a {
+  display: inline-block; padding: 8px 14px;
+  border: 1px solid rgba(127,127,127,0.4); border-radius: 8px;
+}
+.empty-state { margin-top: 3em; text-align: center; opacity: 0.7; }
+footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
+
+.summary-btn {
+  display: inline-block; margin: 0 0 1em 10px;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(127,127,127,0.4);
+  background: rgba(127,127,127,0.12); font-size: 0.9rem;
+}
+.summary-toggle { display: none; }
+.summary-backdrop, .summary-modal { display: none; }
+.summary-toggle:checked ~ .summary-backdrop,
+.summary-toggle:checked ~ .summary-modal { display: block; }
+.summary-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 20; }
+.summary-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 21; background: #fff; color: #1a1a1a;
+  width: min(92vw, 480px); max-height: 82vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.summary-modal h2 { margin-top: 0; }
+.summary-close {
+  position: absolute; top: 10px; right: 16px; cursor: pointer;
+  font-size: 1.3rem; opacity: 0.6;
+}
+.summary-close:hover { opacity: 1; }
+.stock-card {
+  border: 1px solid rgba(127,127,127,0.3); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+}
+.stock-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stock-card-head strong { font-size: 1.05rem; }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+}
+.badge-buy { background: #16833e22; color: #0f6b31; }
+.badge-hold { background: #77777730; color: #555; }
+.badge-sell { background: #c0392b22; color: #a53324; }
+.stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
+
+/* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
+   若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e6e6e6; }
+  a { color: #7cb8ff; }
+  hr { border-color: #444; }
+  blockquote { border-color: #ff6b6b; background: #33201f; color: #f2d9d9; }
+  table { border-color: #444; }
+  th, td { border-color: #444; }
+  .summary-modal { background: #232323; color: #e6e6e6; }
+  .badge-buy { background: #2ecc7133; color: #7bedac; }
+  .badge-hold { background: #ffffff26; color: #ddd; }
+  .badge-sell { background: #ff6b6b33; color: #ffabab; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="back-link" href="../index.html">← 回首頁</a>
+<h1>BJSPG 盤前分析報告</h1>
+<p><strong>時間</strong>：2026-07-08 08:00（PRE） <strong>執行</strong>：Claude Code Routines 排程（UC-BJSPG 3.5.1）</p>
+<blockquote><strong>資料時效性說明</strong>： - 台股收盤價：前一交易日（2026-07-07）14:30 收盤 - 籌碼數據（融資融券、三大法人）：前一交易日（2026-07-07），沿用盤後報告資料 - SOX：美東時間 2026-07-07 收盤（台灣時間 2026-07-08 05:16），Yahoo Finance 顯示收盤數據 - WTI：2026-07-07 19:37 EDT（台灣時間 2026-07-08 07:37）最新期貨報價 - 日經 225 / KOSPI：2026-07-08 08:00 台灣時間今晨開盤初段，Yahoo Finance 頁面提示「資料可能延遲」，僅供參考</blockquote>
+<hr>
+<h2>A. 總經與市場底座</h2>
+<div class="table-wrap"><table><thead><tr><th>指標</th><th>數值</th><th>漲跌</th><th>備註</th></tr></thead><tbody><tr><td>費城半導體指數（SOX）</td><td>12,900.14</td><td>+273.92（+2.17%）</td><td>美東 2026-07-07 收盤</td></tr><tr><td>WTI 原油</td><td>USD 72.48/桶</td><td>+2.04（+2.90%）</td><td>2026-07-07 19:37 EDT 期貨，較昨 POST 報告 69.28 明顯拉升</td></tr><tr><td>台灣加權指數（TWII）</td><td>45,479.11</td><td>+1,077.28（+2.31%）</td><td>2026-07-07 收盤（今日開盤前最新參考）</td></tr><tr><td>日經 225（N225）</td><td>68,256.96</td><td>-1,480.73（-2.12%）</td><td>⚠️ 今晨開盤初段，資料可能延遲，請使用者自行複核</td></tr><tr><td>韓國 KOSPI</td><td>7,656.31</td><td>-395.02（-4.91%）</td><td>⚠️ 今晨開盤初段，資料可能延遲，跌幅若屬實為較大跌勢</td></tr></tbody></table></div>
+<p><strong>市場氛圍</strong>：SOX 昨晚大漲 +2.17%，延續美科技股強勢動能。WTI 原油今晨跳漲至 72.48（+2.90%），較昨日盤後明顯拉升，需注意能源成本上升對製造業利潤的中期影響。台股昨日大漲 +2.31%（45,479 點），整體基調偏多。</p>
+<p><strong>區域市場警示</strong>：今晨日韓股市開盤均走弱——日經 -2.12%、KOSPI -4.91%（⚠️ Yahoo Finance 顯示資料可能延遲，-4.91% 幅度若屬實為相當大的跌勢）。若區域跌勢確認，台股開盤可能承壓，建議使用者在台股開盤初段走勢確認後再決定是否執行低接掛單。</p>
+<p><strong>系統性風險評估</strong>：SOX 昨收 +2.17%（未達 -5% 崩盤閾值）；TWII 昨日 +2.31%（未達 -3% 崩盤閾值）。<strong>系統性崩盤條件今日尚未觸發</strong>。今晨區域市場警示需開盤後盤中驗證。</p>
+<hr>
+<h2>B. 關注個股籌碼表（2026-07-07 正式數據，沿用盤後報告）</h2>
+<p><strong>融資融券增減</strong>：資料未取得（<code>tw.stock.yahoo.com</code> 個股融資券頁面回傳 404，請使用者自行至 TWSE 官網複核）</p>
+<p><strong>三大法人買賣超</strong>（單位：張；正值=買超，負值=賣超）：</p>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>外資</th><th>投信</th><th>自營商</th><th>合計</th><th>2026-07-07 收盤價</th></tr></thead><tbody><tr><td>3702</td><td>大聯大</td><td>-1,790</td><td>+1,661</td><td>+97</td><td>-32</td><td>109.0</td></tr><tr><td>2356</td><td>英業達</td><td>-5,013</td><td>+4,826</td><td>+490</td><td>+303</td><td>65.4</td></tr><tr><td>2609</td><td>陽明</td><td>-11,452</td><td>+44</td><td>-673</td><td>-12,081</td><td>51.1</td></tr><tr><td>2421</td><td>建準</td><td>-196</td><td>+119</td><td>-51</td><td>-128</td><td>144.0</td></tr><tr><td>0052</td><td>富邦科技</td><td>-661</td><td>0</td><td>-1,716</td><td>-2,377</td><td>62.20</td></tr><tr><td>0056</td><td>元大高股息</td><td>-6,360</td><td>0</td><td>-54,631</td><td>-60,991</td><td>52.15</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>-4,075</td><td>0</td><td>-3,510</td><td>-7,585</td><td>32.97</td></tr><tr><td>2330</td><td>台積電</td><td>+83</td><td>+539</td><td>-237</td><td>+385</td><td>2,440</td></tr><tr><td>6757</td><td>台灣虎航</td><td>+83</td><td>0</td><td>-37</td><td>+46</td><td>60.20</td></tr><tr><td>2312</td><td>金寶</td><td>-1,781</td><td>-3</td><td>-506</td><td>-2,290</td><td>34.10</td></tr><tr><td>2324</td><td>仁寶</td><td>+3,478</td><td>-4,723</td><td>+717</td><td>-528</td><td>35.30</td></tr><tr><td>2883</td><td>凱基金</td><td>+25,977</td><td>-3,099</td><td>+2,957</td><td>+25,834</td><td>30.10</td></tr><tr><td>3013</td><td>晟銘電</td><td>+3</td><td>0</td><td>+13</td><td>+16</td><td>105.50</td></tr><tr><td>6282</td><td>康舒</td><td>-8,108</td><td>+390</td><td>-1,121</td><td>-8,839</td><td>56.20</td></tr><tr><td>3455</td><td>由田</td><td>-3</td><td>0</td><td>+135</td><td>+132</td><td>238.50</td></tr><tr><td>1519</td><td>華城</td><td>-642</td><td>+1</td><td>-62</td><td>-704</td><td>748.25</td></tr></tbody></table></div>
+<p><strong>除權除息預告</strong>（TWSE 官方 TWT48U API 本次重新查證）：</p>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>現金股利</th><th>除息日（民國）</th></tr></thead><tbody><tr><td>2356</td><td>英業達</td><td>2.00 元</td><td>115年07月15日</td></tr><tr><td>2609</td><td>陽明</td><td>2.00 元</td><td>115年07月14日</td></tr><tr><td>3013</td><td>晟銘電</td><td>0.40 元</td><td>115年07月14日</td></tr></tbody></table></div>
+<p>其餘代號（3702、2421、0052、0056、00878、2330、6757、2312、2324、2883、6282、3455、1519）未出現在本次 TWSE 除權息預告表。</p>
+<hr>
+<h2>C. 建議動作</h2>
+<h3>3702 大聯大</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：107–108</li><li><strong>理據</strong>：昨收 109.0，仍高於限價區上緣。法人合計微幅賣超（-32 張），外資-投信拉鋸延續，籌碼方向未明。今晨日韓走弱增添不確定性；等待台股開盤確認方向，觀望為主。</li></ul>
+<hr>
+<h3>2356 英業達</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：65.0–66.0</li><li><strong>理據</strong>：昨收 65.4，位於低接區中段。外資大幅賣超 -5,013 張 vs 投信買超 +4,826 張，籌碼嚴重撕裂。<strong>注意</strong>：下週二（7/15）現金股利 2.00 元除息（TWSE 查證），除息後參考基準價將下移約 2 元（約 63.4 元）；在外資出清未止之前，維持觀望，等待除息後籌碼趨穩再評估低接機會。</li></ul>
+<hr>
+<h3>2609 陽明</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：49.0–50.5</li><li><strong>理據</strong>：昨收 51.1，高於低接區上緣（50.5）。外資大幅賣超 -11,452 張，三大合計 -12,081 張，法人態度持續偏空。<strong>注意</strong>：下週一（7/14）現金股利 2.00 元除息（TWSE 查證），除息後參考基準價約 49.1 元，本週可能持續有除息前賣壓；待除息後量縮止跌再重新評估 49.0–50.5 低接機會，現階段觀望。</li></ul>
+<hr>
+<h3>2421 建準</h3>
+<ul><li><strong>動作</strong>：【金字塔低接】</li><li><strong>限價區間</strong>：142–144（第一批）</li><li><strong>理據</strong>：昨收 144.0，再次落在第一批低接支撐區間內。投信小幅買超 +119 張提供底部支撐，大盤整體仍偏多（TWII 昨 +2.31%，SOX +2.17%）。雖今晨日韓開盤走弱，但建準連日在 142–144 守穩，可在此區間分批承接第一批；<strong>若盤中破 141，需改觀察是否洗盤後再確認</strong>，不宜繼續接刀。今晨若日韓跌勢擴大，可考慮縮小第一批數量。</li></ul>
+<hr>
+<h3>0052 富邦科技</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：61.5–62.5</li><li><strong>理據</strong>：昨收 62.20，進入低接區下緣。三大法人合計賣超 -2,377 張（外資 -661、自營 -1,716），籌碼持續偏空。法人未轉向前不宜接刀；維持觀望。</li></ul>
+<hr>
+<h3>0056 元大高股息</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：51.5–52.5</li><li><strong>理據</strong>：昨收 52.15，進入低接區中段。自營商異常大量賣超 -54,631 張（合計 -60,991 張），背後可能為 ETF 除息操作、避險或做市行為，性質尚不明確；在釐清巨量賣超來源前，不宜進場，維持觀望。</li></ul>
+<hr>
+<h3>00878 國泰永續高股息</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：32.5–33.0</li><li><strong>理據</strong>：昨收 32.97，接近低接區上緣（33.0）。外資 -4,075、自營 -3,510，合計賣超 -7,585 張，法人持續出清。等待籌碼翻正再評估進場，維持觀望。</li></ul>
+<hr>
+<h3>2330 台積電</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：2,370–2,420</li><li><strong>理據</strong>：昨收 2,440，高於低接區上緣（2,420）。法人合計買超 +385 張（外資 +83、投信 +539），籌碼穩健。SOX 昨大漲 +2.17% 對台積電偏正；今晨日韓走弱若壓制開盤，可等待回測低接區；維持觀望。</li></ul>
+<hr>
+<h3>6757 台灣虎航</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：58.5–59.5</li><li><strong>理據</strong>：昨收 60.20，仍高於低接區上緣（59.5）。法人合計小幅買超 +46 張（中性偏正）。持續等待回測機會。</li></ul>
+<hr>
+<h3>2312 金寶</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：34.0–35.0</li><li><strong>理據</strong>：昨收 34.10，進入低接區下緣。但三大法人全面賣超（合計 -2,290 張），接刀風險偏高；等待法人停止出清或量縮止跌訊號後再評估。</li></ul>
+<hr>
+<h3>2324 仁寶</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：34.0–35.0</li><li><strong>理據</strong>：昨收 35.30，高於低接區上緣。投信連日大量賣超（-4,723 張，連賣已逾 14 日），為重要警訊；不建議在投信持續出清之際進場，維持觀望。</li></ul>
+<hr>
+<h3>2883 凱基金</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：28.5–29.5</li><li><strong>理據</strong>：昨收 30.10，高於低接區上緣（29.5）。昨日外資大幅買超 +25,977 張（關注清單最強），今日確認延續性是關鍵。短線已反映買入效應，不追高；等待盤中回測 28.5–29.5 再評估低接機會。</li></ul>
+<hr>
+<h3>3013 晟銘電</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：104–107</li><li><strong>理據</strong>：昨收 105.50（今日 Yahoo 查詢再次確認，前次資料不一致問題已消除）。法人合計小幅買超 +16 張，動能不足。<strong>注意</strong>：下週一（7/14）現金股利 0.40 元除息（TWSE 查證），影響幅度極小（約 0.38%）。現價在低接區範圍內，但法人動能不足，維持觀望；等待明確買盤訊號。</li></ul>
+<hr>
+<h3>6282 康舒</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：53.0–55.0</li><li><strong>理據</strong>：昨收 56.20，高於低接區上緣（55.0）。外資持續大幅賣超 -8,108 張（合計 -8,839 張），趨勢向下未止。不宜接刀；等待外資出清停歇或股價進入 53.0–55.0 後量縮止跌再評估。</li></ul>
+<hr>
+<h3>3455 由田</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：235–240</li><li><strong>理據</strong>：昨收 238.50，位於低接區中段。自營商小幅買超 +135 張，外資幾近平盤（-3 張），整體動能不足，無明顯進場訊號；持續觀望。</li></ul>
+<hr>
+<h3>1519 華城</h3>
+<ul><li><strong>動作</strong>：【觀望看戲】</li><li><strong>限價區間</strong>：745–760</li><li><strong>理據</strong>：昨收 748.25，進入低接區下緣（745–760）。外資賣超 -642 張，合計 -704 張，法人持續出清；不宜搶先進場，等待外資動向翻轉或量縮止跌訊號再行動。</li></ul>
+<hr>
+<h2>D. 資金安全警語與回補提示</h2>
+<p><strong>[CASH_WARNING]</strong> 本系統所有建議僅供個人參考，不代表任何投資保證。系統不連接券商 API，不追蹤真實庫存與 T+2 交割款；所有金額／張數建議請使用者依自身實際資金水位自行評估風險後執行。一律限價委託，不追市價單。</p>
+<p><strong>今日無「高位停利變現」建議，無待回補標記新增。</strong></p>
+<p><strong>開盤前注意事項</strong>：今晨日韓股市開盤走弱（日經 -2.12%、KOSPI -4.91%，惟 Yahoo Finance 資料可能延遲），建議使用者於台股開盤前確認最新指數走向。若區域跌勢擴大，今日操作宜偏謹慎，2421 建準低接掛單可考慮縮小第一批數量或等待盤中守穩確認後再執行。</p>
+<hr>
+<h2>延續數據表</h2>
+<blockquote>本表由排程腳本依 <code>reports/state.json</code> 目前記錄的數字決定性產出，非本次報告分析內容。</blockquote>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>收盤價</th><th>第一批限價</th></tr></thead><tbody><tr><td>3702</td><td>大聯大</td><td>109.0</td><td>107-108</td></tr><tr><td>2356</td><td>英業達</td><td>65.4</td><td>65.0-66.0</td></tr><tr><td>2609</td><td>陽明</td><td>51.1</td><td>49.0-50.5</td></tr><tr><td>2421</td><td>建準</td><td>144.0</td><td>142-144</td></tr><tr><td>0052</td><td>富邦科技</td><td>62.20</td><td>61.5-62.5</td></tr><tr><td>0056</td><td>元大高股息</td><td>52.15</td><td>51.5-52.5</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>32.97</td><td>32.5-33.0</td></tr><tr><td>2330</td><td>台積電</td><td>2440</td><td>2370-2420</td></tr><tr><td>6757</td><td>台灣虎航</td><td>60.20</td><td>58.5-59.5</td></tr><tr><td>2312</td><td>金寶</td><td>34.10</td><td>34.0-35.0</td></tr><tr><td>2324</td><td>仁寶</td><td>35.30</td><td>34.0-35.0</td></tr><tr><td>2883</td><td>凱基金</td><td>30.10</td><td>28.5-29.5</td></tr><tr><td>3013</td><td>晟銘電</td><td>105.50</td><td>104-107</td></tr><tr><td>6282</td><td>康舒</td><td>56.20</td><td>53.0-55.0</td></tr><tr><td>3455</td><td>由田</td><td>238.50</td><td>235-240</td></tr><tr><td>1519</td><td>華城</td><td>748.25</td><td>745-760</td></tr></tbody></table></div>
+<footer>BJSPG — 個人台股現股觀察輔助系統，僅供參考，不構成投資建議。</footer>
+</div>
+</body>
+</html>
