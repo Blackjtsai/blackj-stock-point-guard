@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-07-08T21:30:00+08:00",
+  "last_updated": "2026-07-09T08:00:00+08:00",
   "stocks": {
     "3702": {
       "name": "大聯大",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "105.53",
       "limit_range": "107-108"
@@ -14,7 +14,7 @@
       "name": "英業達",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "66.20",
       "limit_range": "65.0-66.0"
@@ -23,7 +23,7 @@
       "name": "陽明",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "52.31",
       "limit_range": "49.0-50.5"
@@ -31,8 +31,8 @@
     "2421": {
       "name": "建準",
       "last_action": "金字塔低接",
-      "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_action_time": "2026-07-09T08:00:00+08:00",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "143.50",
       "limit_range": "142-144"
@@ -41,7 +41,7 @@
       "name": "富邦科技",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "62.15",
       "limit_range": "61.5-62.5"
@@ -50,7 +50,7 @@
       "name": "元大高股息",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "52.35",
       "limit_range": "51.5-52.5"
@@ -59,7 +59,7 @@
       "name": "國泰永續高股息",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "33.20",
       "limit_range": "32.5-33.0"
@@ -68,7 +68,7 @@
       "name": "台積電",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "2465",
       "limit_range": "2370-2420"
@@ -77,7 +77,7 @@
       "name": "台灣虎航",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "59.80",
       "limit_range": "58.5-59.5"
@@ -86,7 +86,7 @@
       "name": "金寶",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "34.15",
       "limit_range": "34.0-35.0"
@@ -95,7 +95,7 @@
       "name": "仁寶",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "35.50",
       "limit_range": "34.0-35.0"
@@ -104,7 +104,7 @@
       "name": "凱基金",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "30.70",
       "limit_range": "28.5-29.5"
@@ -113,7 +113,7 @@
       "name": "晟銘電",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "105.50",
       "limit_range": "104-107"
@@ -122,7 +122,7 @@
       "name": "康舒",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "59.00",
       "limit_range": "57.0-58.0"
@@ -131,7 +131,7 @@
       "name": "由田",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "236.00",
       "limit_range": "235-240"
@@ -140,7 +140,7 @@
       "name": "華城",
       "last_action": "觀望看戲",
       "last_action_time": "2026-07-08T21:30:00+08:00",
-      "last_report": "reports/2026-07-08/2130_POST.md",
+      "last_report": "reports/2026-07-09/0800_PRE.md",
       "pending_rebuy": false,
       "last_price": "748.25",
       "limit_range": "745-760"
