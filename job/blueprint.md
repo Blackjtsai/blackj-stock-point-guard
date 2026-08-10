@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.10 ／ 最後更新：2026-07-07
+> 版本：v0.11 ／ 最後更新：2026-08-10
 
 ## 技術棧
 
@@ -20,16 +20,18 @@ job/
 ├── append_continuity_table.py  # 決定性附加「延續數據表」到報告檔案末尾，讀 state.json + watchlist.json，不假手 LLM 排版（見 ADR-005、SDD 6.5）
 ├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
 ├── holdings.local.json      # 【本機專用，未進版控，見 .gitignore】真實持股成本價快照，使用者手動維護、排程唯讀，供護盾續抱規則使用（見 SDD 6.6）
+├── notify.local.json        # 【本機專用，未進版控，見 .gitignore】ntfy.sh topic 名稱，供排程完成推播通知使用（見 SDD 6.7、ADR-008）
 ├── launchd/                 # 【已停用，見 ADR-007】plist 原始檔，原註冊在 ~/Library/LaunchAgents/，僅存檔案作歷史紀錄
 │   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:00)
 │   ├── com.blackjtsai.bjspg.mid.plist   (平日 12:30)
 │   └── com.blackjtsai.bjspg.post.plist  (平日 21:30)
 ├── prompts/                 # 各時段分析 prompt，餵給雲端 Routines 執行；皆含「資料正確性鐵律」與「版本控制」段落（自行 git commit/push + web/deploy.sh，失敗即結束不重試，見 ADR-007）；只需把 last_price/limit_range 寫進 state.json，延續數據表由 append_continuity_table.py 決定性附加，不需自己排版
-│   ├── PRE.md               # 已實際跑過（含 2026-07-06 正式交易日排程），計算完限價後寫回 state.json 的 last_price/limit_range
-│   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4
-│   └── POST.md               # 2026-07-06 21:30 正式交易日執行遇雲端 sandbox 網路故障，報告遺失（見 ADR-007），正式交易日情境待 Layer 4 重新驗證
+│   ├── PRE.md               # 已實際跑過（含 2026-07-06 正式交易日排程），計算完限價後寫回 state.json 的 last_price/limit_range；2026-08-10 新增排程完成通知步驟（見 SDD 6.7）
+│   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4；2026-08-10 新增排程完成通知步驟
+│   └── POST.md               # 2026-07-06 21:30 正式交易日執行遇雲端 sandbox 網路故障，報告遺失（見 ADR-007），正式交易日情境待 Layer 4 重新驗證；2026-08-10 新增排程完成通知步驟
 ├── inbox/
 │   └── links.md             # 使用者手動貼 YouTube/新聞連結，21:30 POST 讀取分析後標記已處理
+├── run_analysis_local_backup.sh  # 本機臨時備援排程入口（見 docs/SETUP.md）；2026-08-10 新增：git push 成功後確定性執行 ntfy.sh 推播（不假手 claude，因該路徑 `--allowedTools` 未授權 Bash，見 ADR-008）
 └── logs/                    # 執行 log，不進版控
 ```
 
@@ -54,3 +56,4 @@ job/
 - 回補提示僅根據 `reports/state.json` 記錄的系統自身建議歷史推算，不代表使用者真實持股；但 `holdings.local.json` 有記錄的代號，其「高位停利變現」建議時機另受護盾續抱規則約束（見 `docs/design/SDD.md` 第 6.6 節），兩者不衝突：前者是回補提示的資料來源限制，後者是停利建議本身的節流閥
 - 排程觸發改為 claude.ai/code 雲端 Routines（`BJSPG-PRE-0800`／`BJSPG-MID-1230`／`BJSPG-POST-2130`，Weekdays），僅平日觸發；本機 `launchd`（3 個 plist，`StartCalendarInterval` 皆為 Weekday 1～5 陣列）為原始設計，已停用（見 ADR-007）
 - git commit/push 失敗（含網路錯誤、GitHub App 權限不足等）時，Routine 必須直接結束，不重試、不深入除錯（見 ADR-007），避免佔用大量 tool call 卡在原地
+- 排程完成通知（ntfy.sh，見 SDD 6.7、ADR-008）只在真的產生新 commit 且 push 成功時才發送；`job/notify.local.json` 不存在時直接跳過，不視為錯誤；雲端 Routine 因該檔案未進版控、沙盒內不存在，實際上只有本機備援路徑會真的推播，此為已知且接受的行為

@@ -67,9 +67,11 @@ else
 fi
 
 PUSHED=0
+COMMITTED=0
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "job: ${REPORT_TYPE} 報告 $(date '+%Y-%m-%d %H:%M')" >> "$LOG_FILE" 2>&1
+  COMMITTED=1
   if git push >> "$LOG_FILE" 2>&1; then
     PUSHED=1
   else
@@ -85,6 +87,29 @@ if [ "$PUSHED" -eq 1 ]; then
   DEPLOY_EXIT=$?
   if [ "$DEPLOY_EXIT" -ne 0 ]; then
     echo "web/deploy.sh 執行失敗（exit ${DEPLOY_EXIT}），本次網頁未更新，不重試" >> "$LOG_FILE"
+  fi
+fi
+
+# 排程完成通知（見 SDD.md 6.7、ADR-008）：只有本次真的產生新 commit 且成功 push 才通知，
+# 避免「無異動」情況下重複推播舊連結。確定性執行，不假手 claude（同 ADR-001/ADR-005 精神），
+# 因為本機備援呼叫 claude 時 --allowedTools 未授權 Bash，prompt 內的推播指示對本機備援路徑不會真的執行。
+if [ "$COMMITTED" -eq 1 ] && [ "$PUSHED" -eq 1 ]; then
+  NOTIFY_FILE="$PROJECT_DIR/job/notify.local.json"
+  if [ -f "$NOTIFY_FILE" ]; then
+    NTFY_TOPIC=$("$PYTHON_BIN" -c "import json,sys; print(json.load(open(sys.argv[1])).get('ntfy_topic',''))" "$NOTIFY_FILE" 2>/dev/null)
+    if [ -n "$NTFY_TOPIC" ]; then
+      case "$REPORT_TYPE" in
+        PRE) HHMM="0800" ;;
+        MID) HHMM="1230" ;;
+        POST) HHMM="2130" ;;
+      esac
+      REPORT_URL="https://blackjtsai.github.io/blackj-stock-point-guard/$(date '+%Y-%m-%d')/${HHMM}_${REPORT_TYPE}.html"
+      if ! curl -s -H "Title: BJSPG ${HHMM} ${REPORT_TYPE} 報告已發布" -d "$REPORT_URL" "https://ntfy.sh/${NTFY_TOPIC}" >> "$LOG_FILE" 2>&1; then
+        echo "ntfy 推播失敗，本次不重試" >> "$LOG_FILE"
+      fi
+    fi
+  else
+    echo "找不到 job/notify.local.json，略過推播通知" >> "$LOG_FILE"
   fi
 fi
 

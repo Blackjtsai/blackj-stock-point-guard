@@ -26,7 +26,7 @@
 
 ## 輸出
 
-1. 依 `docs/design/SDD.md` 第 6.3 節欄位規範撰寫完整報告，B 段使用「當日正式公告數據」（不是前一日），並附上明日操盤方向規劃段落。若某代號因 SDD 6.6 護盾續抱規則而被擋下「高位停利變現」，必須在該代號 C 段明確寫出「護盾續抱」與安全墊百分比，作為當日最終報告的紀錄，不能只給結論不交代原因。**不需要自己另外組「延續數據表」**——只要本次有重新查到股價時同步寫進 `reports/state.json`（見下方第 3 點），該表格會由 `job/append_continuity_table.py` 自動決定性附加，不假手你排版（見 ADR-005）。
+1. 依 `docs/design/SDD.md` 第 6.3 節欄位規範撰寫完整報告，B 段使用「當日正式公告數據」（不是前一日），並附上明日操盤方向規劃段落。語氣依 6.3 節「語氣與敘事風格」規範撰寫，僅限包裝與呈現方式，不得影響數字的真實性。若某代號因 SDD 6.6 護盾續抱規則而被擋下「高位停利變現」，必須在該代號 C 段明確寫出「護盾續抱」與安全墊百分比，作為當日最終報告的紀錄，不能只給結論不交代原因。**不需要自己另外組「延續數據表」**——只要本次有重新查到股價時同步寫進 `reports/state.json`（見下方第 3 點），該表格會由 `job/append_continuity_table.py` 自動決定性附加，不假手你排版（見 ADR-005）。
 2. 用 Write 工具寫入：`reports/{今天日期}/2130_POST.md`。
 3. 更新 `reports/state.json`：寫入每檔股票今日最終建議動作、時間戳、待回補標記；若建議動作有調整，`limit_range` 同步更新，若本次有查到新報價則同步更新 `last_price`。
 4. 若第 2 步有更新 `job/inbox/links.md`，記得用 Edit 工具把處理過的連結標記回存。
@@ -34,4 +34,5 @@
 6. 用 Bash 執行 `git add -A && git commit -m "job: POST 報告 {YYYY-MM-DD HH:MM}"`（日期時間用系統環境的當前時間）；若 `git status --porcelain` 顯示無任何異動，跳過本節其餘步驟。
 7. 用 Bash 執行 `git push`。**若失敗**（網路錯誤、逾時、403 等任何非零 exit code）：**不重試（最多嘗試一次）、不深入除錯**（不檢查 GPG/SSH 簽名、不測試 GitHub MCP 或其他 push 管道），直接停止本節其餘步驟——已寫入的本地 commit 原地保留、不修改不還原，下次排程觸發時會自動接續處理，本次報告視為當次遺失，不需要現在解決（見 ADR-007）。
 8. 若第 7 步 `git push` 成功，接著用 Bash 執行 `bash web/deploy.sh` 更新前台網頁；若這步失敗，同樣不重試，直接視為完成。
-9. 完成後只需簡短回覆一行：push 成功回「已產出 2130_POST 報告」；push 失敗回「已產出 2130_POST 報告但 git push 失敗（已保留本地 commit）」。
+9. 若第 7 步 `git push` 成功，讀取 `job/notify.local.json`（若檔案不存在，跳過本步驟，不視為錯誤）取得 `ntfy_topic`，用 Bash 執行 `curl -H "Title: BJSPG 2130 POST 報告已發布" -d "https://blackjtsai.github.io/blackj-stock-point-guard/{今天日期}/2130_POST.html" https://ntfy.sh/{ntfy_topic}` 推播通知；失敗不重試、不影響本次流程結果。
+10. 完成後只需簡短回覆一行：push 成功回「已產出 2130_POST 報告」；push 失敗回「已產出 2130_POST 報告但 git push 失敗（已保留本地 commit）」。

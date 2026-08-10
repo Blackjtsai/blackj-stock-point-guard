@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-08-10 確認本機備援排程停跑原因（使用者手動關機）、報告語氣風格規範、排程完成推播通知（ADR-008）
+
+- 排查最新報告停在 2026-07-15 的原因：確認本機 Windows Task Scheduler 備援排程（`BJSPG_*_Backup`）設定本身仍在、`Ready` 狀態，並非故障或環境問題——單純是使用者這段期間自己把電腦關機，觸發窗口被錯過。順帶盤點雲端 Routine 的 GitHub App 整合權限（`Contents: Read/Write`）仍是 ❌，此待辦沿用 ADR-007。
+- 使用者提出希望報告語氣可仿照 Gemini 範例的「老大／控球後衛資金調度」戰術敘事風格。釐清後只採納語氣/排版，**不採納**範例中的推測性「波段目標價」數字——與 6.2 節資料正確性鐵律（ADR-003 教訓）直接衝突。`docs/design/SDD.md` 新增 6.3 節「語氣與敘事風格」規範（v0.9→v0.10），`job/prompts/{PRE,MID,POST}.md` 同步補上引用。
+- 依 Gemini 範例名單，`job/watchlist.json` 新增 8 檔百元內平價題材股（迎廣、協易機、大亞、亞力、光聖、聯鈞、金居、聯茂）；原本已在清單的 7 檔（建準、英業達、陽明、富邦科技、元大高股息、國泰永續高股息、台積電）不重複加。
+- 新增排程完成推播通知（UC-BJSPG 3.5.8，見 `docs/decisions/ADR-008-push-notification-channel.md`）：
+  - 確認 LINE Notify 已於 2025-03-31 正式關閉；權衡 LINE Messaging API 的設定複雜度後，改選 **ntfy.sh**（免帳號免 Token，用隨機字串 topic `bjspg-dd8b923e` 代替憑證），並以官方商店連結（`io.heckel.ntfy`）引導使用者安裝、避免裝錯 App；手動 curl 測試兩次確認手機能收到推播（含開高優先級 `Priority: urgent` 才會跳系統橫幅，Android 需另外確認通知權限與電池優化白名單）
+  - 新增 `job/notify.local.json`（比照 ADR-006 模式，`.gitignore` 排除、不進版控）存放 topic 名稱
+  - **重要發現並修正**：本機備援腳本 `job/run_analysis_local_backup.sh` 呼叫 `claude -p` 時 `--allowedTools` 未授權 Bash（見 ADR-001），若推播邏輯只寫在 `job/prompts/*.md` 交給 LLM 執行 `curl`，本機備援路徑不會真的執行——與 git commit/push、`append_continuity_table.py` 是同一類問題。修正為推播邏輯兩處都寫：prompt 供雲端 Routine（有完整 Bash）使用；`run_analysis_local_backup.sh` 新增確定性推播區塊供本機備援路徑使用，且只在本次真的有新 commit 且 push 成功時才發送
+  - `docs/design/SDD.md` 新增 6.7 節與 UC-BJSPG 3.5.8（v0.10→v0.11）；`docs/design/TASK.md` Layer 2 補上驗收條件列；`web/blueprint.md` 修正「不需要新報告通知機制」這條被推翻的舊決策；`job/blueprint.md` 同步更新（v0.10→v0.11）
+- 尚未驗證：本機備援排程 `BJSPG_PRE_Backup` 下次觸發時間為 2026-08-11 08:00，需等這次實跑才能確認 git push 成功後真的會收到推播（已在 `docs/TODO.md` 標記進行中）
+
 ## 2026-07-06 護盾續抱規則（ADR-006）與資料查證流程補強，查核 0800_PRE 報告優化指示
 
 - 使用者對 0800_PRE 報告提出三點優化指示：(1) 質疑英業達(2356) 除息日/股利數字為幻覺 (2) 要求對真實持股套用「成本護盾」邏輯避免短線散戶思維過早停利 (3) 質疑大聯大(3702) 法人數據又缺失、要求補 TWSE T86 備援。逐項查核後動手實作，過程中修正了使用者的兩個錯誤前提，未盲目照單全收：

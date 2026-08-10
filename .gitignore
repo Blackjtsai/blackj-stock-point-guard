@@ -6,3 +6,4 @@
 .gh-pages-worktree/
 __pycache__/
 job/holdings.local.json
+job/notify.local.json
