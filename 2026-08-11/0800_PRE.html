@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026-08-11 0800 盤前報告（PRE）</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+  line-height: 1.7;
+  background: #fafafa; color: #1a1a1a;
+}
+.container { max-width: 780px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.2rem; margin-top: 2em; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
+h3 { font-size: 1.05rem; margin-top: 1.5em; }
+a { color: #0645ad; text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+blockquote {
+  margin: 1em 0; padding: 8px 14px;
+  border-left: 4px solid #c00; background: #fff0f0;
+}
+code {
+  background: rgba(127,127,127,0.15);
+  padding: 1px 5px; border-radius: 4px;
+  font-size: 0.9em;
+}
+.table-wrap { overflow-x: auto; margin: 1em 0; }
+table { border-collapse: collapse; width: 100%; min-width: 320px; }
+th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; font-size: 0.95rem; }
+th { background: rgba(127,127,127,0.15); }
+.back-link { display: inline-block; margin-bottom: 1em; font-size: 0.9rem; }
+.index-date { margin-top: 1.6em; }
+.index-date h2 { margin-bottom: 0.4em; border: none; }
+.index-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; flex-wrap: wrap; }
+.index-list li a {
+  display: inline-block; padding: 8px 14px;
+  border: 1px solid rgba(127,127,127,0.4); border-radius: 8px;
+}
+.empty-state { margin-top: 3em; text-align: center; opacity: 0.7; }
+footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
+
+.summary-btn {
+  display: inline-block; margin: 0 0 1em 10px;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(127,127,127,0.4);
+  background: rgba(127,127,127,0.12); font-size: 0.9rem;
+}
+.summary-toggle { display: none; }
+.summary-backdrop, .summary-modal { display: none; }
+.summary-toggle:checked ~ .summary-backdrop,
+.summary-toggle:checked ~ .summary-modal { display: block; }
+.summary-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 20; }
+.summary-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 21; background: #fff; color: #1a1a1a;
+  width: min(92vw, 480px); max-height: 82vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.summary-modal h2 { margin-top: 0; }
+.summary-close {
+  position: absolute; top: 10px; right: 16px; cursor: pointer;
+  font-size: 1.3rem; opacity: 0.6;
+}
+.summary-close:hover { opacity: 1; }
+.stock-card {
+  border: 1px solid rgba(127,127,127,0.3); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+}
+.stock-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stock-card-head strong { font-size: 1.05rem; }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+}
+.badge-buy { background: #16833e22; color: #0f6b31; }
+.badge-hold { background: #77777730; color: #555; }
+.badge-sell { background: #c0392b22; color: #a53324; }
+.stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
+
+/* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
+   若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e6e6e6; }
+  a { color: #7cb8ff; }
+  hr { border-color: #444; }
+  blockquote { border-color: #ff6b6b; background: #33201f; color: #f2d9d9; }
+  table { border-color: #444; }
+  th, td { border-color: #444; }
+  .summary-modal { background: #232323; color: #e6e6e6; }
+  .badge-buy { background: #2ecc7133; color: #7bedac; }
+  .badge-hold { background: #ffffff26; color: #ddd; }
+  .badge-sell { background: #ff6b6b33; color: #ffabab; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="back-link" href="../index.html">← 回首頁</a>
+<h1>BJSPG 盤前分析 ── 2026-08-11 PRE（0800）</h1>
+<p><strong>報告產出時間：2026-08-11 08:00（台灣時間）</strong></p>
+<p><strong>資料時效性說明：</strong></p>
+<ul><li>股價資料：2026-08-10 收盤（上週五，為最近交易日）</li><li>籌碼資料（融資融券、三大法人）：<strong>無前一交易日籌碼資料</strong>——系統最後一份籌碼紀錄為 2026-07-15，距今已 27 日，B 段各欄位一律標示「資料未取得」，請老大自行至台灣證交所或 Yahoo 奇摩股市個股頁面複核</li><li>日本 / 韓國指數：本時段執行時間（08:00 台灣 = 09:00 日本 / 韓國）日韓甫開盤，Yahoo Finance 顯示為最近收盤資料</li></ul>
+<hr>
+<h2>🌐 A. 總經與市場底座</h2>
+<div class="table-wrap"><table><thead><tr><th>指標</th><th>數值</th><th>變動</th></tr></thead><tbody><tr><td>費城半導體指數（SOX）</td><td>12,060.41</td><td>-118.85（-0.98%）</td></tr><tr><td>WTI 原油</td><td>$82.09</td><td>-$0.04（-0.05%）</td></tr><tr><td>台股加權指數（TAIEX）</td><td>44,928.76</td><td>+702.85（+1.59%，2026-08-10 收盤）</td></tr><tr><td>台股成交量</td><td>10,148,622（單位待確認，Yahoo 所顯示原始數值）</td><td>—</td></tr><tr><td>日經 225（^N225）</td><td>65,683.26</td><td>-617.18（-0.93%，最近收盤，疑為 2026-08-08 收盤）</td></tr><tr><td>KOSPI（^KS11）</td><td>6,258.77</td><td>-37.61（-0.60%，⚠️ 頁面顯示資料日期為 2026-08-07，疑韓國上週五為假日，請老大自行複核）</td></tr></tbody></table></div>
+<p><strong>老大，盤前情勢解讀如下：</strong></p>
+<p>上週五（2026-08-10）是一個強勁的控球後衛贏球場。台股加權衝上 44,928，單日漲 702 點（+1.59%），成交量放大，關注清單中多數個股同步上演 3～10% 的齊漲走勢——3702 大聯大 +6.12%、6282 康舒 +6.04%、6442 光聖 +7.55%、3450 聯鈞 / 6213 聯茂更是直接漲停板。資金面偏積極。</p>
+<p>然而美股 SOX 上週五同步小跌 -0.98%，半導體族群存在輕微逆風；日韓股市最近收盤均小跌（日 -0.93%、韓 -0.60%，且 KOSPI 資料日期疑為週四，顯示區域市場非全面齊漲）。WTI 油價穩定 $82，通膨壓力中性。</p>
+<p><strong>控球後衛今日策略</strong>：台股週五強攻後，週一（今日）有慣性高位整理或小幅回吐的可能。系統性崩盤訊號不存在（SOX 僅 -0.98%，TAIEX 仍在高位），但不是追漲日——守紀律等候回測，在預設限價位置佈網，不追市價。</p>
+<hr>
+<h2>📊 B. 關注個股籌碼表</h2>
+<blockquote>⚠️ <strong>籌碼資料全面未取得</strong>：系統最後一份籌碼紀錄為 2026-07-15（距今 27 日），本次無 2026-08-08 前一交易日之正式籌碼公告資料，以下各欄一律標示「資料未取得」。老大如需籌碼依據，請至 TWSE 官網或 Yahoo 奇摩股市個股法人頁自行查閱。</blockquote>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>前日收盤</th><th>前一日融資增減</th><th>前一日融券增減</th><th>外資買賣超</th><th>投信買賣超</th><th>自營商買賣超</th></tr></thead><tbody><tr><td>3702</td><td>大聯大</td><td>130.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2356</td><td>英業達</td><td>66.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2609</td><td>陽明</td><td>51.60</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2421</td><td>建準</td><td>149.50</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>0052</td><td>富邦科技</td><td>60.95</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>0056</td><td>元大高股息</td><td>52.45</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>33.40</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2330</td><td>台積電</td><td>2,380</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>6757</td><td>台灣虎航</td><td>55.60</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2312</td><td>金寶</td><td>32.50</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2324</td><td>仁寶</td><td>36.30</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>2883</td><td>凱基金</td><td>31.05</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>3013</td><td>晟銘電</td><td>87.20</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>6282</td><td>康舒</td><td>50.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>3455</td><td>由田</td><td>205.50</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>1519</td><td>華城</td><td>671.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>6117</td><td>迎廣</td><td>66.30</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>4533</td><td>協易機</td><td>25.50</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>1609</td><td>大亞</td><td>36.95</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>1514</td><td>亞力</td><td>102.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>6442</td><td>光聖</td><td>1,425</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>3450</td><td>聯鈞</td><td>524.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>8358</td><td>金居</td><td>346.00</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr><tr><td>6213</td><td>聯茂</td><td>427.50</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td><td>資料未取得</td></tr></tbody></table></div>
+<hr>
+<h2>🎯 C. 建議動作</h2>
+<blockquote>本次無 <code>holdings.local.json</code> 真實持股記錄，護盾續抱規則（SDD 6.6 節）不適用任何標的。所有限價區間為第一批參考位置，一律限價掛單，不追市價。</blockquote>
+<hr>
+<h3>🔻【金字塔低接】1 檔</h3>
+<h4>3455 由田（前一交易日收盤 205.50）</h4>
+<ul><li><strong>建議限價低接第一批</strong>：196.0 ～ 202.0（限價，不追價）</li><li><strong>理據</strong>：前次系統預設低接目標區為 205～215（2026-07-15 報告），上週五收 205.50 已抵達目標區下緣，從 7 月高點 224.50 回落約 -8.5%，技術上符合金字塔網格第一批進場條件。籌碼資料未取得，風險較高，建議第一批量控制在計畫部位 30% 以內，等後續籌碼確認再加碼。若今日開盤走高撐回 210 以上，可上調觀察區間再評估。</li></ul>
+<hr>
+<h3>👀【觀望看戲】23 檔</h3>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>前日收盤</th><th>參考低接區間（非本次動作，供佈局參考）</th><th>觀望理由摘要</th></tr></thead><tbody><tr><td>3702</td><td>大聯大</td><td>130.00</td><td>123.0 ～ 125.5</td><td>週五大漲 +6.12%，7月以來累漲 +8.8%，高位整理觀望</td></tr><tr><td>2356</td><td>英業達</td><td>66.00</td><td>62.5 ～ 64.0</td><td>週五 +3.12%，動能佳但偏高，等拉回 62.5 附近</td></tr><tr><td>2609</td><td>陽明</td><td>51.60</td><td>49.0 ～ 50.5</td><td>週五 +2.18%，航運股彈升，等確認 50 守穩後再評估</td></tr><tr><td>2421</td><td>建準</td><td>149.50</td><td>142.0 ～ 145.0</td><td>7 月至今累漲 +12%，高位追高風險大，等回測 142～145</td></tr><tr><td>0052</td><td>富邦科技</td><td>60.95</td><td>58.5 ～ 59.5</td><td>科技 ETF 月線整理，現價偏高，等拉回再評估</td></tr><tr><td>0056</td><td>元大高股息</td><td>52.45</td><td>51.0 ～ 52.0</td><td>高息 ETF 穩步上行，現價接近高位，等拉回 51 以下</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>33.40</td><td>32.40 ～ 33.00</td><td>同 0056，ETF 穩定，現價偏高，守 32.5 觀望</td></tr><tr><td>2330</td><td>台積電</td><td>2,380</td><td>2,260 ～ 2,310</td><td>從 7 月 2,420 小幅回落，SOX 略有壓力，等更明確籌碼訊號</td></tr><tr><td>6757</td><td>台灣虎航</td><td>55.60</td><td>52.5 ～ 54.0</td><td>7 月 57.30 回落，週五反彈 +3.14%，方向待確認</td></tr><tr><td>2312</td><td>金寶</td><td>32.50</td><td>30.50 ～ 31.50</td><td>週五 +3.83%，月線橫整，籌碼未取得，觀望</td></tr><tr><td>2324</td><td>仁寶</td><td>36.30</td><td>34.50 ～ 35.50</td><td>週五小漲 +0.68%，動能中性，觀望</td></tr><tr><td>2883</td><td>凱基金</td><td>31.05</td><td>29.50 ～ 30.50</td><td>前次低接訊號（29.0～29.5）已觸及，現價升至 31.05，切換觀望</td></tr><tr><td>3013</td><td>晟銘電</td><td>87.20</td><td>83.0 ～ 86.0</td><td>7 月以來累跌 -9.5%，週五見反彈 +2.47%，底部試探待確認，籌碼未取得暫觀望</td></tr><tr><td>6282</td><td>康舒</td><td>50.00</td><td>47.5 ～ 49.0</td><td>7 月以來跌近 -9%，週五強彈 +6.04% 收 50，需確認站穩 50 以上再評估</td></tr><tr><td>1519</td><td>華城</td><td>671.00</td><td>637 ～ 650</td><td>7 月 692 小幅回落，週五 +2.76%，電力設備族群強，現價偏高，觀望</td></tr><tr><td>6117</td><td>迎廣</td><td>66.30</td><td>63.0 ～ 64.5</td><td>【新增】週五 +0.61%，機殼散熱概念，首次納入觀望</td></tr><tr><td>4533</td><td>協易機</td><td>25.50</td><td>24.00 ～ 25.00</td><td>【新增】週五 +3.66%，機械設備，首次納入觀望</td></tr><tr><td>1609</td><td>大亞</td><td>36.95</td><td>35.10 ～ 36.00</td><td>【新增】週五逆勢小跌 -0.27%，電線電纜，首次納入觀望</td></tr><tr><td>1514</td><td>亞力</td><td>102.00</td><td>97.0 ～ 99.0</td><td>【新增】週五 +2.20%，電力設備，首次納入觀望</td></tr><tr><td>6442</td><td>光聖</td><td>1,425</td><td>1,350 ～ 1,390</td><td>【新增】週五強攻 +7.55%，接近漲停，追高風險極高，首次納入觀望不追</td></tr><tr><td>3450</td><td>聯鈞</td><td>524.00</td><td>498 ～ 510</td><td>【新增】週五漲停板 +9.85%，射頻濾波器題材，漲停後追高禁止，觀望等回測</td></tr><tr><td>8358</td><td>金居</td><td>346.00</td><td>329 ～ 340</td><td>【新增】週五 +1.70%，覆銅板族群，首次納入觀望</td></tr><tr><td>6213</td><td>聯茂</td><td>427.50</td><td>406 ～ 418</td><td>【新增】週五漲停板 +9.90%，覆銅板題材，漲停後追高禁止，觀望等回測</td></tr></tbody></table></div>
+<hr>
+<h2>💰 D. 資金安全警語與回補提示</h2>
+<blockquote><strong>[CASH_WARNING]</strong> 本系統所有建議僅供老大參考，不連接券商、不知悉真實資金水位與庫存狀況。任何買賣決策由老大本人執行，請依自身資金水位與風險承受度謹慎操作。所有建議一律限價掛單，<strong>禁止追市價</strong>。</blockquote>
+<p><strong>待回補狀態</strong>：本次歷史紀錄中無「高位停利變現」待回補標的，D 段無特別回補提示。</p>
+<p><strong>2883 凱基金追蹤</strong>：前次（2026-07-15）建議「金字塔低接」於 29.0～29.5，目前已升至 31.05（+5.2%），假設前次限價有成交，目前處於獲利中。本次切換觀望，不建議在當前價位加碼，等待下一個回測機會。</p>
+<p><strong>籌碼資料缺口提醒</strong>：本次報告因系統休眠 27 日（2026-07-15 至 2026-08-11）無任何中間籌碼紀錄，B 段判斷完全依賴價格走勢，風險較平時高。老大若有重要操作，強烈建議在 21:30 POST 報告確認當日正式籌碼數據後再執行。</p>
+<hr>
+<p>*本報告由 BJSPG 排程系統於 2026-08-11 08:00 自動產出。*</p>
+<hr>
+<h2>延續數據表</h2>
+<blockquote>本表由排程腳本依 <code>reports/state.json</code> 目前記錄的數字決定性產出，非本次報告分析內容。</blockquote>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>收盤價</th><th>第一批限價</th></tr></thead><tbody><tr><td>3702</td><td>大聯大</td><td>130.00</td><td>123.0-125.5</td></tr><tr><td>2356</td><td>英業達</td><td>66.00</td><td>62.5-64.0</td></tr><tr><td>2609</td><td>陽明</td><td>51.60</td><td>49.0-50.5</td></tr><tr><td>2421</td><td>建準</td><td>149.50</td><td>142.0-145.0</td></tr><tr><td>0052</td><td>富邦科技</td><td>60.95</td><td>58.5-59.5</td></tr><tr><td>0056</td><td>元大高股息</td><td>52.45</td><td>51.0-52.0</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>33.40</td><td>32.40-33.00</td></tr><tr><td>2330</td><td>台積電</td><td>2380</td><td>2260-2310</td></tr><tr><td>6757</td><td>台灣虎航</td><td>55.60</td><td>52.5-54.0</td></tr><tr><td>2312</td><td>金寶</td><td>32.50</td><td>30.50-31.50</td></tr><tr><td>2324</td><td>仁寶</td><td>36.30</td><td>34.50-35.50</td></tr><tr><td>2883</td><td>凱基金</td><td>31.05</td><td>29.50-30.50</td></tr><tr><td>3013</td><td>晟銘電</td><td>87.20</td><td>83.0-86.0</td></tr><tr><td>6282</td><td>康舒</td><td>50.00</td><td>47.5-49.0</td></tr><tr><td>3455</td><td>由田</td><td>205.50</td><td>196.0-202.0</td></tr><tr><td>1519</td><td>華城</td><td>671.00</td><td>637-650</td></tr><tr><td>6117</td><td>迎廣</td><td>66.30</td><td>63.0-64.5</td></tr><tr><td>4533</td><td>協易機</td><td>25.50</td><td>24.00-25.00</td></tr><tr><td>1609</td><td>大亞</td><td>36.95</td><td>35.10-36.00</td></tr><tr><td>1514</td><td>亞力</td><td>102.00</td><td>97.0-99.0</td></tr><tr><td>6442</td><td>光聖</td><td>1425</td><td>1350-1390</td></tr><tr><td>3450</td><td>聯鈞</td><td>524.00</td><td>498-510</td></tr><tr><td>8358</td><td>金居</td><td>346.00</td><td>329-340</td></tr><tr><td>6213</td><td>聯茂</td><td>427.50</td><td>406-418</td></tr></tbody></table></div>
+<footer>BJSPG — 個人台股現股觀察輔助系統，僅供參考，不構成投資建議。</footer>
+</div>
+</body>
+</html>
