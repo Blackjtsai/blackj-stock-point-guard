@@ -16,6 +16,14 @@
   - `docs/design/SDD.md` 新增 6.7 節與 UC-BJSPG 3.5.8（v0.10→v0.11）；`docs/design/TASK.md` Layer 2 補上驗收條件列；`web/blueprint.md` 修正「不需要新報告通知機制」這條被推翻的舊決策；`job/blueprint.md` 同步更新（v0.10→v0.11）
 - 尚未驗證：本機備援排程 `BJSPG_PRE_Backup` 下次觸發時間為 2026-08-11 08:00，需等這次實跑才能確認 git push 成功後真的會收到推播（已在 `docs/TODO.md` 標記進行中）
 
+## 2026-08-11 PRE 排程實跑驗證推播功能、CLAUDE.md 正確性盤點、8 角度 code review 修正通知邏輯
+
+- **08:00 PRE 本機備援首次實跑通知功能，全鏈路成功**：分析 → commit/push → deploy → ntfy 推播，log 可見 ntfy 回應 JSON。過程中發現推播標題中文亂碼（HTTP header 傳統只支援 ASCII），後續改標題/內文一律純 ASCII 才穩定送達（曾誤把中文放進 body 測試，被 ntfy 誤判成二進位附件，比亂碼標題更糟，已避開）。
+- 使用者貼出跟 Gemini 整理的交易心法文件（命名為 `CLAUDE.md`，隱含想當系統設定檔），主動指出其中「絕不停損」與 SDD 6.6 護盾續抱規則的崩盤例外機制衝突，並用 AskUserQuestion 問清楚用途；使用者選擇「純個人參考，系統不動」——與先前語氣/數字分界判斷一致，第二次驗證同一種穩定偏好，memory 已補記。
+- 使用者要求盤點 `CLAUDE.md` 正確性與內容擺放，抓出 4 處跟現況脫節：技術棧表未提本機備援機制、error path #2 誤標「已停用」、`/checkservice` 說明不完整、目錄結構 ADR 計數與檔案清單過時。逐項修正，並同步修正 `docs/INTRO.md`（同類型脫節，程度更嚴重，原文仍描述本機 macOS launchd）與 `docs/design/ARCHITECTURE.md`（Mermaid 圖補上 Windows 本機備援與 ntfy 推播節點）。
+- **執行 8 角度（3 正確性 + 3 清理 + altitude + conventions）high 強度 code review**，針對排程完成通知功能的完整異動（含前一次 checkpoint 已 commit 的 `feat: UC-BJSPG 3.5.8` 那批）。多角度收斂到同一個真正的 bug：`git commit` 未檢查是否成功就把 `COMMITTED` 旗標設 1，可能對著沒有真的產生的異動誤發推播；efficiency 角度另抓到推播 URL 的日期在推播當下重新呼叫 `date`，跟報告實際寫入時間是兩次不同時間點，跨午夜會連到錯誤日期；altitude 角度指出推播邏輯散落 shell script + 3 個 prompt 檔 + SDD.md 共 5 處，跟專案已有的 `append_continuity_table.py`（同一類雲端/本機雙路徑問題）解法不一致。
+- **修正**：抽出共用 `job/notify.sh`（比照 `append_continuity_table.py` 模式），日期/類型一律從呼叫方已解析的實際報告檔案路徑取得（不重新呼叫 `date`，同時解決日期漂移與 HHMM 重複維護兩個問題）；`git commit` 改成確認成功才設 `COMMITTED=1`；補上手動測試時發現必要、但正式版本忘記帶的 `Priority: urgent` header 與 curl 逾時設定。`job/run_analysis_local_backup.sh`、三個 `job/prompts/*.md`、`docs/design/SDD.md` 6.7 節、`ADR-008`、`job/blueprint.md`、`docs/design/ARCHITECTURE.md` 同步更新。本機端用今天實際的報告檔案重新測試 `job/notify.sh`，確認 PRE/MID 兩種檔名格式的日期/類型解析都正確。
+
 ## 2026-07-06 護盾續抱規則（ADR-006）與資料查證流程補強，查核 0800_PRE 報告優化指示
 
 - 使用者對 0800_PRE 報告提出三點優化指示：(1) 質疑英業達(2356) 除息日/股利數字為幻覺 (2) 要求對真實持股套用「成本護盾」邏輯避免短線散戶思維過早停利 (3) 質疑大聯大(3702) 法人數據又缺失、要求補 TWSE T86 備援。逐項查核後動手實作，過程中修正了使用者的兩個錯誤前提，未盲目照單全收：

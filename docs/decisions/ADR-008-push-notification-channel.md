@@ -31,3 +31,14 @@
 `job/notify.local.json` 不存在時兩處都直接跳過，不視為錯誤（沿用 ADR-006 「本機專用檔案缺席時降級為原邏輯」設計）。
 
 後果：雲端 Routine 因為 `notify.local.json` 未進版控、沙盒內不存在該檔案，實際上永遠不會從雲端路徑發出通知，只有本機備援路徑（此檔案實體存在於磁碟）會真的推播——這是已知且接受的行為，非 bug。
+
+## 追記（2026-08-11，8 角度 code review 後修訂）
+
+2026-08-11 08:00 PRE 本機備援首次實跑成功，證實整條路徑可用，但也曝露最初實作的問題：
+
+1. **`COMMITTED` 旗標沒檢查 `git commit` 是否真的成功**：3 個獨立 review 角度都抓到同一個 bug——`git commit` 失敗時（例如 hook 擋下、簽名設定問題）`COMMITTED` 仍被設為 1，若當下又剛好有殘留的舊 commit 可以 push 成功，會對著「其實沒有真的產生本次異動」的狀態誤發推播。已修正為只有 `git commit` 回傳成功才設 `COMMITTED=1`。
+2. **推播 URL 的日期在推播當下重新呼叫 `date`，跟報告實際寫入時的日期是兩次不同時間點**：分析流程可能跑好幾分鐘，若橫跨午夜（尤其 21:30 POST），會組出跟報告實際路徑不符的日期，連到 404。
+3. **邏輯散落 5 處**（shell script 內嵌 + 3 個 prompt 檔各自手刻 + SDD.md 文字描述），跟專案已有的 `append_continuity_table.py` 解法（用共用 script 避免雲端/本機雙路徑各自維護）不一致，altitude 角度明確指出這是「該往下沉一層而沒有沉」的 bandaid。
+4. 手動測試時用 `Priority: urgent` 才能保證跳系統橫幅，但這個 header 沒有被帶進正式的 script/prompt 版本，且原始 curl 呼叫沒有逾時設定。
+
+**修正**：抽出 `job/notify.sh`，日期/類型一律從呼叫方已經解析好的實際報告檔案路徑取得（不重新呼叫 `date`），內建 `Priority: urgent` 與 10 秒逾時；`job/run_analysis_local_backup.sh` 與三個 `job/prompts/*.md` 都改成呼叫 `bash job/notify.sh {報告檔案路徑}`，不再各自組 curl 指令。此修正沿用 ADR-005「決定性邏輯不假手 LLM排版、共用單一實作」的精神。

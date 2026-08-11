@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.11 ／ 最後更新：2026-08-10
+> 版本：v0.12 ／ 最後更新：2026-08-11
 
 ## 技術棧
 
@@ -21,6 +21,7 @@ job/
 ├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
 ├── holdings.local.json      # 【本機專用，未進版控，見 .gitignore】真實持股成本價快照，使用者手動維護、排程唯讀，供護盾續抱規則使用（見 SDD 6.6）
 ├── notify.local.json        # 【本機專用，未進版控，見 .gitignore】ntfy.sh topic 名稱，供排程完成推播通知使用（見 SDD 6.7、ADR-008）
+├── notify.sh                 # 排程完成推播通知，雲端 Routine 與本機備援共用實作（2026-08-11 新增，見 SDD 6.7、ADR-008）
 ├── launchd/                 # 【已停用，見 ADR-007】plist 原始檔，原註冊在 ~/Library/LaunchAgents/，僅存檔案作歷史紀錄
 │   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:00)
 │   ├── com.blackjtsai.bjspg.mid.plist   (平日 12:30)
@@ -31,7 +32,7 @@ job/
 │   └── POST.md               # 2026-07-06 21:30 正式交易日執行遇雲端 sandbox 網路故障，報告遺失（見 ADR-007），正式交易日情境待 Layer 4 重新驗證；2026-08-10 新增排程完成通知步驟
 ├── inbox/
 │   └── links.md             # 使用者手動貼 YouTube/新聞連結，21:30 POST 讀取分析後標記已處理
-├── run_analysis_local_backup.sh  # 本機臨時備援排程入口（見 docs/SETUP.md）；2026-08-10 新增：git push 成功後確定性執行 ntfy.sh 推播（不假手 claude，因該路徑 `--allowedTools` 未授權 Bash，見 ADR-008）
+├── run_analysis_local_backup.sh  # 本機臨時備援排程入口（見 docs/SETUP.md）；2026-08-11 修訂：git commit 確認成功才視為有新異動（修正誤發推播風險），push 成功後呼叫 job/notify.sh 推播（不假手 claude，因該路徑 `--allowedTools` 未授權 Bash，見 ADR-008）
 └── logs/                    # 執行 log，不進版控
 ```
 

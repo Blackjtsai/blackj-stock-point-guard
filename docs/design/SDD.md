@@ -119,10 +119,11 @@ GitHub Pages 部署路徑已定案：本機腳本（`web/deploy.sh`）+ 獨立 `
 
 **規則**：
 
-1. 僅在該時段 `git push` 成功後才推播（見各 `job/prompts/*.md` 版本控制段落）；push 失敗則不發通知，直接照既有 error path 結束（見 ADR-007），失敗本身不需要額外用推播提醒使用者。
+1. 僅在該時段**真的產生新 commit 且 `git push` 成功後**才推播（見各 `job/prompts/*.md` 版本控制段落）——「無檔案異動」或 `git commit` 本身失敗都不算，避免無異動時誤發或重複推播舊連結；push 失敗則不發通知，直接照既有 error path 結束（見 ADR-007），失敗本身不需要額外用推播提醒使用者。
 2. `job/notify.local.json` 不存在時，直接跳過本步驟，不視為錯誤（沿用 6.6 節同款「本機專用檔案缺席時降級為原邏輯」設計）。
-3. 通知內容固定帶上該次報告的直達連結，網址規則為 `https://blackjtsai.github.io/blackj-stock-point-guard/{YYYY-MM-DD}/{HHMM}_{PRE|MID|POST}.html`（見 `web/build.py`），由 LLM 依當次日期與時段直接組字串，不需要另外查證。
-4. 推播失敗（含逾時、非 2xx 回應）不重試、不深入除錯，直接視為本步驟完成，不影響報告本身已寫入與已 push 的結果。
+3. 通知內容固定帶上該次報告的直達連結，網址規則為 `https://blackjtsai.github.io/blackj-stock-point-guard/{YYYY-MM-DD}/{HHMM}_{PRE|MID|POST}.html`（見 `web/build.py`）。**實作統一由 `job/notify.sh` 負責**（2026-08-11 code review 後從各 prompt 內文手刻的 curl 指令抽出，比照 `append_continuity_table.py` 的模式，避免 URL 組字串、topic 讀取、ASCII 編碼規則分散在多個 prompt 檔各自維護）：雲端 Routine 與本機備援路徑都呼叫 `bash job/notify.sh {報告檔案路徑}`，不再各自組字串。
+4. 推播失敗（含逾時、非 2xx 回應）不重試、不深入除錯，直接視為本步驟完成，不影響報告本身已寫入與已 push 的結果；`job/notify.sh` 內建 10 秒逾時，避免卡住排程。
+5. 通知 Title 與 body 一律純 ASCII，不可夾雜中文——中文字元在部分 shell 環境下放 HTTP header 會亂碼、放 body 會被 ntfy 誤判成二進位檔案改用附件形式（2026-08-11 實測發生過兩種情況）。
 
 ### 6.4 三時段任務差異（本時段定位）
 
@@ -147,3 +148,4 @@ GitHub Pages 部署路徑已定案：本機腳本（`web/deploy.sh`）+ 獨立 `
 | v0.9 | 2026-07-06 | 6.2 節新增除權除息官方查證來源（TWSE `TWT48U`）與法人數據備援順序（明訂禁止以 `T86`/`TWT44U` 全市場表當備援，實測不支援單一代號篩選）；新增 6.6 節護盾續抱規則，`job/holdings.local.json`（本機專用、未進版控）記錄真實成本價，安全墊 ≥5% 時預設不建議提前停利，除非大盤系統性崩盤（見 ADR-006） |
 | v0.10 | 2026-08-10 | 6.3 節新增「語氣與敘事風格」規範：報告可採戰術教練口吻、PG 資金調度比喻、表情符號分段標題，但僅限包裝呈現，數字仍須嚴格遵守 6.2 資料正確性鐵律，禁止推測性「波段目標價」 |
 | v0.11 | 2026-08-10 | 新增 UC-BJSPG 3.5.8 與 6.7 節「排程完成通知」：git push 成功後用 ntfy.sh 推播報告連結，`job/notify.local.json`（本機專用、未進版控）存放 topic 名稱 |
+| v0.12 | 2026-08-11 | 6.7 節修訂：實作抽出共用 `job/notify.sh`（不再各 prompt 手刻 curl），修正「commit 未確認成功就推播」風險，明確「真的有新 commit」的觸發但書，補上 ASCII-only 編碼規則說明（2026-08-11 08:00 PRE 實跑驗證 + 8 角度 code review 後修正） |

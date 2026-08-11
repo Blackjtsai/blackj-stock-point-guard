@@ -83,7 +83,7 @@
 本專案沒有傳統意義上的單元測試套件（核心邏輯是 Claude Code 於排程時即席分析，非固定演算法）。驗收改以 **Layer 4 端對端整合測試** 取代：實際跑三個排程時間點，確認報告產出、狀態檔更新、git push、前台顯示皆正確，並涵蓋以下 error path：
 
 1. 資料抓不到 / 來源矛盾 → 報告該欄位明確標示「資料未取得」，不得捏造數字
-2. 排程觸發時電腦未開機／未登入 → 該次排程直接跳過，不重試不報錯（本機 launchd 時期的情境，已停用，見 ADR-007）
+2. 排程觸發時電腦未開機／未登入 → 該次排程直接跳過，不重試不報錯（原為本機 launchd 時期的情境；該機制雖已停用，但 Windows Task Scheduler 本機備援排程仍受相同限制，此 error path 依然適用，2026-08-10/11 已實際發生一次，見 ADR-007）
 3. 排程觸發時 Claude 訂閱用量不足 → 該次排程失敗即結束，不重試
 4. 雲端 Routine sandbox 網路故障或 git push 失敗 → 直接結束，不重試、不深入除錯（不查簽名、不測 MCP 權限、不改道其他 push 管道），本地已寫的 commit 留給下次排程接續，本次報告視為遺失（見 ADR-007）
 
@@ -109,8 +109,8 @@
 
 | 層 | 技術 |
 |---|---|
-| 執行引擎 | Claude Code 雲端 Routines（claude.ai/code agentic session），使用者自己的訂閱額度；本機 launchd + headless `claude -p` 為原始設計，已停用（見 ADR-007） |
-| 排程 | claude.ai/code Routines（`BJSPG-PRE-0800`／`BJSPG-MID-1230`／`BJSPG-POST-2130`，Weekdays，即平日 08:00 / 12:30 / 21:30） |
+| 執行引擎 | Claude Code 雲端 Routines（claude.ai/code agentic session），使用者自己的訂閱額度為主要機制；**Windows Task Scheduler 本機備援**（`BJSPG_*_Backup` + `job/run_analysis_local_backup.sh`，2026-07-07 新增，見 ADR-007）在雲端問題期間實際承擔報告產出；本機 macOS `launchd` + headless `claude -p`（`job/run_analysis.sh`）為原始設計，已徹底停用，與上述 Windows 本機備援是不同機制，不可混淆 |
+| 排程 | claude.ai/code Routines（`BJSPG-PRE-0800`／`BJSPG-MID-1230`／`BJSPG-POST-2130`，Weekdays，即平日 08:00 / 12:30 / 21:30）；Windows Task Scheduler 本機備援同時段觸發，見 `docs/SETUP.md` |
 | 資料儲存 | Markdown 報告檔 + `reports/state.json` |
 | 前台 | 純 HTML / CSS / 少量原生 JS，無框架，RWD |
 | 版控與部署 | Git + GitHub Pages |
@@ -119,7 +119,7 @@
 ## 必備技能
 
 - `/checkpoint` — **必備**，每次對話結束前執行（commit + push + 累積開發經驗）
-- `/checkservice` — 本專案無需。沒有常駐 Web server / DB / Queue，排程為 claude.ai/code Routines 自行觸發，就緒狀態直接查 `docs/SETUP.md`
+- `/checkservice` — 本專案無需。沒有常駐 Web server / DB / Queue，排程由 claude.ai/code Routines 與 Windows Task Scheduler 本機備援共同觸發，就緒狀態直接查 `docs/SETUP.md`
 
 ## 實作順序（嚴格遵守，未驗收不動下一層）
 
@@ -178,6 +178,7 @@ blackj-stock-point-guard/
 │   ├── INTRO.md
 │   ├── TODO.md
 │   ├── SETUP.md
+│   ├── CHANGELOG.md        # 每次 /checkpoint 追加一筆對話重點摘要
 │   ├── requirements/       # 需求來源文件
 │   │   ├── 需求.md
 │   │   ├── 需求-原始構想.md
@@ -187,10 +188,12 @@ blackj-stock-point-guard/
 │   │   ├── TASK.md
 │   │   └── SDD.md
 │   └── decisions/
-│       └── ADR-000-template.md、ADR-001～007-*.md
+│       └── ADR-000-template.md、ADR-001～008-*.md
 ├── job/
 │   ├── blueprint.md        # 排程分析邏輯（UC-BJSPG 3.5）
-│   └── holdings.local.json # 本機專用，未進版控：真實持股成本價（見 ADR-006）
+│   ├── holdings.local.json # 本機專用，未進版控：真實持股成本價（見 ADR-006）
+│   ├── notify.local.json   # 本機專用，未進版控：ntfy.sh 推播 topic（見 ADR-008）
+│   └── notify.sh           # 排程完成推播通知，雲端 Routine 與本機備援共用實作（見 ADR-008）
 ├── web/
 │   └── blueprint.md        # 前台 Dashboard（UC-BJSPG 3.2）
 └── reports/                # Layer 2 開始後才產生，報告與 state.json

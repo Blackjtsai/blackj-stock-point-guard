@@ -8,7 +8,7 @@
 #           雲端 Routine 修好後應停用此排程，不要兩邊同時跑造成重複 commit。
 # 所屬模組：job/
 # 建立日期：2026-07-07
-# 修改日期：2026-07-07
+# 修改日期：2026-08-11
 # 開發者　：Claude Code
 # ============================================================
 #
@@ -70,12 +70,15 @@ PUSHED=0
 COMMITTED=0
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
-  git commit -m "job: ${REPORT_TYPE} 報告 $(date '+%Y-%m-%d %H:%M')" >> "$LOG_FILE" 2>&1
-  COMMITTED=1
-  if git push >> "$LOG_FILE" 2>&1; then
-    PUSHED=1
+  if git commit -m "job: ${REPORT_TYPE} 報告 $(date '+%Y-%m-%d %H:%M')" >> "$LOG_FILE" 2>&1; then
+    COMMITTED=1
+    if git push >> "$LOG_FILE" 2>&1; then
+      PUSHED=1
+    else
+      echo "git push 失敗，本次不重試；略過網頁部署避免公開網頁顯示尚未推送成功的內容" >> "$LOG_FILE"
+    fi
   else
-    echo "git push 失敗，本次不重試；略過網頁部署避免公開網頁顯示尚未推送成功的內容" >> "$LOG_FILE"
+    echo "git commit 失敗，本次不重試；略過網頁部署與推播通知" >> "$LOG_FILE"
   fi
 else
   echo "無檔案異動，略過 commit" >> "$LOG_FILE"
@@ -90,27 +93,12 @@ if [ "$PUSHED" -eq 1 ]; then
   fi
 fi
 
-# 排程完成通知（見 SDD.md 6.7、ADR-008）：只有本次真的產生新 commit 且成功 push 才通知，
-# 避免「無異動」情況下重複推播舊連結。確定性執行，不假手 claude（同 ADR-001/ADR-005 精神），
-# 因為本機備援呼叫 claude 時 --allowedTools 未授權 Bash，prompt 內的推播指示對本機備援路徑不會真的執行。
-if [ "$COMMITTED" -eq 1 ] && [ "$PUSHED" -eq 1 ]; then
-  NOTIFY_FILE="$PROJECT_DIR/job/notify.local.json"
-  if [ -f "$NOTIFY_FILE" ]; then
-    NTFY_TOPIC=$("$PYTHON_BIN" -c "import json,sys; print(json.load(open(sys.argv[1])).get('ntfy_topic',''))" "$NOTIFY_FILE" 2>/dev/null)
-    if [ -n "$NTFY_TOPIC" ]; then
-      case "$REPORT_TYPE" in
-        PRE) HHMM="0800" ;;
-        MID) HHMM="1230" ;;
-        POST) HHMM="2130" ;;
-      esac
-      REPORT_URL="https://blackjtsai.github.io/blackj-stock-point-guard/$(date '+%Y-%m-%d')/${HHMM}_${REPORT_TYPE}.html"
-      if ! curl -s -H "Title: BJSPG ${HHMM} ${REPORT_TYPE} 報告已發布" -d "$REPORT_URL" "https://ntfy.sh/${NTFY_TOPIC}" >> "$LOG_FILE" 2>&1; then
-        echo "ntfy 推播失敗，本次不重試" >> "$LOG_FILE"
-      fi
-    fi
-  else
-    echo "找不到 job/notify.local.json，略過推播通知" >> "$LOG_FILE"
-  fi
+# 排程完成通知（見 SDD.md 6.7、ADR-008）：只有本次真的產生新 commit（COMMITTED，git commit
+# 確認成功才設為 1）且成功 push 才通知，避免「無異動」或 commit 失敗情況下誤發推播。URL 組字串、
+# topic 讀取、ASCII 編碼規則統一交給 job/notify.sh（雲端 Routine 路徑也呼叫同一支 script，見該檔案
+# header），本機備援路徑仍需由 shell script 呼叫而非交給 LLM，因為 --allowedTools 未授權 Bash。
+if [ "$COMMITTED" -eq 1 ] && [ "$PUSHED" -eq 1 ] && [ -n "$REPORT_FILE" ]; then
+  bash "$PROJECT_DIR/job/notify.sh" "$REPORT_FILE" >> "$LOG_FILE" 2>&1
 fi
 
 echo "===== $(date '+%Y-%m-%d %H:%M:%S') 執行結束 =====" >> "$LOG_FILE"

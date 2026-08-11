@@ -28,7 +28,7 @@
 - [x] UC-BJSPG 3.5.7 關注清單管理（新增/移除標的、YouTube/新聞連結輸入）（`job/watchlist.json`、`job/inbox/links.md`，使用者手動編輯即可，無需額外指令）
 - [-] UC-BJSPG 3.5.6 除權除息查證補強：新增 TWSE 官方除權除息預告表 API（`TWT48U`）查證步驟；法人數據備援順序明確化，禁止以 `T86`/`TWT44U` 全市場表當備援（實測不支援單一代號篩選，且 `TWT48U` 本身也是近 300 筆的大表格，一併補上逐列比對代號的查詢要求）（2026-07-06 規則已寫定，見 SDD v0.9）；**進行中，待下次排程實跑驗證 LLM 確實依新規則查證**
 - [-] UC-BJSPG 3.5.4 新增護盾續抱規則（SDD 6.6）：`job/holdings.local.json`（本機專用、未進版控）記錄真實成本價，安全墊 ≥5% 時 C 段預設不建議「高位停利變現」，除非大盤系統性崩盤（2026-07-06 規則已寫定）；**進行中，待下次 PRE/MID/POST 實跑驗證規則確實套用後才標記完成**
-- [-] UC-BJSPG 3.5.8 排程完成通知（SDD 6.7、ADR-008）：git push 成功後用 ntfy.sh 推播報告連結；`job/notify.local.json`（本機專用、未進版控）存放 topic；本機備援路徑（`run_analysis_local_backup.sh`）已改成確定性執行，不假手 LLM（該路徑 `--allowedTools` 未授權 Bash）；2026-08-10 已用手動 curl 測試 topic 訂閱成功；**進行中，待明日（2026-08-11）本機備援排程實跑，確認報告發布後真的收到推播才標記完成**
+- [x] UC-BJSPG 3.5.8 排程完成通知（SDD 6.7、ADR-008）：git push 成功後用 ntfy.sh 推播報告連結；`job/notify.local.json`（本機專用、未進版控）存放 topic；本機備援路徑（`run_analysis_local_backup.sh`）已改成確定性執行，不假手 LLM（該路徑 `--allowedTools` 未授權 Bash）；**2026-08-11 08:00 PRE 本機備援實跑成功驗證**：LLM 自報無 Bash 工具、script 照樣完成 commit/push/推播，log 可見 ntfy 回應 JSON；同批發現並修正編碼 bug（Title/body 夾雜中文會亂碼或被 ntfy 誤判成二進位附件，已改純 ASCII）；**2026-08-11 8 角度 code review 再修正**：`git commit` 未確認成功就誤發推播的風險、推播 URL 日期跨午夜漂移風險，並抽出共用 `job/notify.sh`（雲端/本機不再各自維護一份），補上 `Priority: urgent` 與逾時設定；MID/POST 情境仍待各自時段實跑驗證
 
 ## Layer 3：前台 Dashboard（UC-BJSPG 3.2.1 ～ 3.2.3）
 

@@ -11,13 +11,13 @@
 | **GitHub Repo** | https://github.com/Blackjtsai/blackj-stock-point-guard.git（Public） |
 
 > 本文件同時供**人類隊友**與**其他專案 Agent** 閱讀。
-> 最後更新：2026-07-04
+> 最後更新：2026-08-11
 
 ---
 
 ## 這個系統是什麼
 
-個人使用的台股現股買賣建議輔助工具。由 Claude Code 在每日三個固定時間點（08:00 / 12:30 / 21:30）本機排程執行分析，蒐集公開市場資料（融資融券、三大法人、費半、WTI），產出買賣建議報告，寫入專案資料夾並 push 到 GitHub，透過 GitHub Pages 靜態網頁瀏覽歷史紀錄。系統不連接券商、不自動下單，所有交易決策仍由使用者本人執行。
+個人使用的台股現股買賣建議輔助工具。每日三個固定時間點（08:00 / 12:30 / 21:30）由 Claude Code 執行分析，蒐集公開市場資料（融資融券、三大法人、費半、WTI），產出買賣建議報告，寫入專案資料夾並 push 到 GitHub，透過 GitHub Pages 靜態網頁瀏覽歷史紀錄。實際執行機制有兩層：claude.ai/code 雲端 Routines 為主要機制，Windows Task Scheduler 本機備援（2026-07-07 新增，見 ADR-007）在雲端問題期間承接，兩者共用同一套 `job/prompts/*.md`。系統不連接券商、不自動下單，所有交易決策仍由使用者本人執行。
 
 ---
 
@@ -35,7 +35,7 @@
 
 ## 如果你是接入方
 
-本系統不對外提供 API，僅供使用者本人透過瀏覽器查看 GitHub Pages 網址。若要串接排程，參考 `docs/SETUP.md` 的 `launchd` 設定方式。
+本系統不對外提供 API，僅供使用者本人透過瀏覽器查看 GitHub Pages 網址。若要了解排程設定（雲端 Routines + Windows Task Scheduler 本機備援雙軌），參考 `docs/SETUP.md`。
 
 ---
 
@@ -43,17 +43,18 @@
 
 | 層 | 技術 |
 |---|---|
-| 執行引擎 | Claude Code CLI（headless） |
-| 排程 | macOS `launchd` |
+| 執行引擎 | Claude Code 雲端 Routines（主要）＋ Windows Task Scheduler 本機備援（`claude -p` headless，雲端問題期間承接，見 ADR-007） |
+| 排程 | claude.ai/code Routines + Windows Task Scheduler，雙軌同時段觸發 |
 | 資料儲存 | Markdown 報告檔 + `reports/state.json` |
 | 前台 | 純 HTML/CSS/JS，無框架 |
 | 部署 | Git + GitHub Pages |
+| 通知 | ntfy.sh 推播（排程完成後，見 ADR-008） |
 
 ---
 
 ## 常見坑
 
-- 排程觸發當下若電腦未開機/未登入/無網路，該次報告不會產生，屬預期行為，非故障
+- 排程觸發當下若電腦未開機/未登入/無網路，該次報告不會產生，屬預期行為，非故障（雲端 Routines 不受此限，但目前的 Windows 本機備援仍受限，2026-08-10/11 曾實際發生）
 - 公開網頁抓到的盤中報價有 delay，12:30 報告是「複核」性質，不是即時大單追蹤
 - 「回補提示」只根據系統自己過去的建議紀錄推算，不代表使用者真實持股狀態
 

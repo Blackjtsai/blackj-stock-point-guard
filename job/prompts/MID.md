@@ -34,5 +34,5 @@
 5. 用 Bash 執行 `git add -A && git commit -m "job: MID 報告 {YYYY-MM-DD HH:MM}"`（日期時間用系統環境的當前時間）；若 `git status --porcelain` 顯示無任何異動，跳過本節其餘步驟。
 6. 用 Bash 執行 `git push`。**若失敗**（網路錯誤、逾時、403 等任何非零 exit code）：**不重試（最多嘗試一次）、不深入除錯**（不檢查 GPG/SSH 簽名、不測試 GitHub MCP 或其他 push 管道），直接停止本節其餘步驟——已寫入的本地 commit 原地保留、不修改不還原，下次排程觸發時會自動接續處理，本次報告視為當次遺失，不需要現在解決（見 ADR-007）。
 7. 若第 6 步 `git push` 成功，接著用 Bash 執行 `bash web/deploy.sh` 更新前台網頁；若這步失敗，同樣不重試，直接視為完成。
-8. 若第 6 步 `git push` 成功，讀取 `job/notify.local.json`（若檔案不存在，跳過本步驟，不視為錯誤）取得 `ntfy_topic`，用 Bash 執行 `curl -H "Title: BJSPG 1230 MID 報告已發布" -d "https://blackjtsai.github.io/blackj-stock-point-guard/{今天日期}/1230_MID.html" https://ntfy.sh/{ntfy_topic}` 推播通知；失敗不重試、不影響本次流程結果。
+8. 若第 6 步 `git push` 成功，用 Bash 執行 `bash job/notify.sh reports/{今天日期}/1230_MID.md` 推播完成通知（該 script 會自行處理 topic 讀取、URL 組字串、ASCII 編碼規則，`job/notify.local.json` 不存在時會靜默跳過，不視為錯誤）；失敗不重試、不影響本次流程結果。
 9. 完成後只需簡短回覆一行：push 成功回「已產出 1230_MID 報告」；push 失敗回「已產出 1230_MID 報告但 git push 失敗（已保留本地 commit）」。
