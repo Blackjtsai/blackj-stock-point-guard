@@ -48,6 +48,8 @@ Unregister-ScheduledTask -TaskName "BJSPG_PRE_Backup","BJSPG_MID_Backup","BJSPG_
 
 2026-07-05 使用者已於 GitHub 網頁完成設定（Source: Deploy from a branch → `gh-pages` / `/(root)`），並以 WebFetch 確認首頁正確顯示 2026-07-04 三份報告連結。之後每次雲端 Routine 執行完會自動更新 `gh-pages` branch 內容（見 `job/prompts/*.md` 版本控制段落），網頁跟著自動刷新，不需要重複設定。
 
+**本機預覽真實現金水庫（選用）**：PG Lightbox 儀表板的現金/持股金額在公開頁一律打碼；若老大想在本機看到真實數字，設 `BJSPG_LOCAL_PREVIEW=1` 執行 `python3 web/build.py <輸出目錄>` 即可（需先在 `job/cash.local.json` 填好真實數字）。**切勿把此模式產出的 HTML push 到 gh-pages**——`web/deploy.sh` 不設此旗標，正常部署一律打碼。
+
 ## 服務啟動
 
 本專案無需常駐服務。claude.ai/code 的 Routines 註冊一次後由 Claude 平台在指定時間自動觸發，無需使用者電腦保持開機在線，也無需每次對話手動啟動。

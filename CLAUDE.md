@@ -152,6 +152,17 @@
 - 報告檔名固定格式：`reports/{YYYY-MM-DD}/{HHMM}_{PRE|MID|POST}.md`
 - 資料抓不到或多來源矛盾時，該欄位標示「資料未取得／來源不一致」，禁止用推測值或記憶中的舊數字填充
 - 每份報告固定包含 `[CASH_WARNING]` 警語
+- **PG 語氣（核心）**：一律稱呼使用者「老大」，採控球後衛（PG）冷血定錨、老神在在、溫暖支持的資深副手口吻——講重點、挺老大、注重防禦與現金主導權，嚴禁機械式長篇廢話（見 SDD 6.3）
+- **Zero Noise 零噪音**：籌碼/股價資料缺漏時嚴禁印 20~30 檔全欄位大表，改一段話溫暖說明並隱藏 B 段；主報告正文只聚焦「有訊號的 3~5 檔」，其餘標的不進正文（但 `state.json` 與延續數據表仍全 watchlist 更新，供前台使用）
+- **報告結尾**固定附一行 `[🔍 開啟 PG 股票回補與關注 Lightbox 儀表板]` 文字指引
+
+### PG 股票回補與關注 Lightbox 儀表板（見 SDD 6.8、ADR-009）
+
+- 每份報告頁與首頁常駐一個 Lightbox 儀表板，呈現 15 檔核心關注/回補對照矩陣（波段目標價、回補區間、PG 戰術）+ 大後方現金水庫
+- 資料三分工：`job/plan.json`（進版控，個人操盤計劃：目標價/回補區間/PG 戰術，非查證值）、`reports/state.json`（進版控，live 現價）、`job/cash.local.json`（**本機專用、gitignore**，真實現金水庫）
+- **波段目標價僅能來自 `job/plan.json` 手動維護值，LLM 不得在報告正文自行生成目標價**（SDD 6.3 標籤化例外）
+- **隱私**：現金/持股金額在公開 GitHub Pages 一律打碼，僅本機設 `BJSPG_LOCAL_PREVIEW=1` 執行 `build.py` 時顯真數字；`deploy.sh` 不設此旗標
+- watchlist / plan.json / state.json 代號保持一致（目前 15 檔）
 
 ## 關鍵業務約束
 
@@ -188,10 +199,13 @@ blackj-stock-point-guard/
 │   │   ├── TASK.md
 │   │   └── SDD.md
 │   └── decisions/
-│       └── ADR-000-template.md、ADR-001～008-*.md
+│       └── ADR-000-template.md、ADR-001～009-*.md
 ├── job/
 │   ├── blueprint.md        # 排程分析邏輯（UC-BJSPG 3.5）
+│   ├── watchlist.json      # 關注股清單（15 檔，進版控）
+│   ├── plan.json           # 個人操盤計劃：波段目標價/回補區間/PG 戰術（進版控，非查證值，見 ADR-009）
 │   ├── holdings.local.json # 本機專用，未進版控：真實持股成本價（見 ADR-006）
+│   ├── cash.local.json     # 本機專用，未進版控：現金水庫/防禦底牌，公開頁打碼（見 ADR-009）
 │   ├── notify.local.json   # 本機專用，未進版控：ntfy.sh 推播 topic（見 ADR-008）
 │   └── notify.sh           # 排程完成推播通知，雲端 Routine 與本機備援共用實作（見 ADR-008）
 ├── web/

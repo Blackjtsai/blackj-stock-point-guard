@@ -7,6 +7,19 @@
 
 ---
 
+## Layer 5：PG Lightbox 儀表板與報告精簡化（2026-08-13，見 ADR-009）
+
+- [x] watchlist 收斂為 15 檔核心關注/回補標的
+- [x] 新增 `job/plan.json`（個人操盤計劃：波段目標價/回補區間/PG 戰術，進版控）
+- [x] 新增 `job/cash.local.json`（現金水庫/防禦底牌，本機專用、gitignore）
+- [x] `web/build.py` 新增 `render_pg_dashboard()` Lightbox（每頁+首頁），現金/持股公開頁打碼、`BJSPG_LOCAL_PREVIEW=1` 本機顯真數字
+- [x] SDD §6.3 強化 PG 語氣 + Zero Noise + 波段目標價標籤化例外；新增 §6.8 儀表板規格（v0.13）
+- [x] `job/prompts/{PRE,MID,POST}.md` 加入 PG 語氣/Zero Noise/聚焦 3~5 檔/Lightbox 按鈕
+- [x] CLAUDE.md 補 persona + Zero Noise + Lightbox 模組 + 目錄結構
+- [x] 新增 ADR-009
+- [ ] 排程實跑一次驗證 PG 語氣與 Zero Noise 生效、Lightbox 現價正確帶入
+- [ ] 老大確認 GitHub Pages 上 Lightbox 現金確實打碼、目標價矩陣呈現正確
+
 ## Layer 1：環境建置與排程骨架（UC-BJSPG 3.1.1 ～ 3.1.3）
 
 - [x] UC-BJSPG 3.1.1 專案骨架建置（CLAUDE.md / docs / .claude 等）

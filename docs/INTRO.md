@@ -11,7 +11,7 @@
 | **GitHub Repo** | https://github.com/Blackjtsai/blackj-stock-point-guard.git（Public） |
 
 > 本文件同時供**人類隊友**與**其他專案 Agent** 閱讀。
-> 最後更新：2026-08-11
+> 最後更新：2026-08-13
 
 ---
 
@@ -28,6 +28,7 @@
 | 路由 | 說明 |
 |---|---|
 | GitHub Pages 首頁 | 依日期列出已產出的報告（08:00/12:30/21:30 三份），最新在最上方 |
+| PG Lightbox 儀表板 | 每頁+首頁常駐燈箱，15 檔核心關注/回補矩陣 + 現金水庫（現金/持股金額公開頁一律打碼，見 ADR-009） |
 
 本系統無 REST API、無 MCP Server、無傳統後台管理介面。
 

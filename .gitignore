@@ -7,3 +7,4 @@
 __pycache__/
 job/holdings.local.json
 job/notify.local.json
+job/cash.local.json

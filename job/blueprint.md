@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.12 ／ 最後更新：2026-08-11
+> 版本：v0.13 ／ 最後更新：2026-08-13
 
 ## 技術棧
 
@@ -18,15 +18,17 @@ job/
 ├── blueprint.md
 ├── run_analysis.sh          # 【已停用，見 ADR-007】原 launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）；claude -p 成功後呼叫 append_continuity_table.py，報告 commit/push 後觸發 web/deploy.sh 更新前台網頁。實際排程已改為雲端 Routines，git commit/push 與呼叫 web/deploy.sh 的責任改寫進各 `prompts/*.md`
 ├── append_continuity_table.py  # 決定性附加「延續數據表」到報告檔案末尾，讀 state.json + watchlist.json，不假手 LLM 排版（見 ADR-005、SDD 6.5）
-├── watchlist.json           # 關注股清單，使用者手動編輯新增/移除標的
+├── watchlist.json           # 關注股清單（15 檔），使用者手動編輯新增/移除標的；與 plan.json 代號須一致
+├── plan.json                # 個人操盤計劃：每檔波段目標價/回補區間/PG戰術/分組（進版控，非查證值），供 PG Lightbox 儀表板呈現（見 SDD 6.8、ADR-009）
 ├── holdings.local.json      # 【本機專用，未進版控，見 .gitignore】真實持股成本價快照，使用者手動維護、排程唯讀，供護盾續抱規則使用（見 SDD 6.6）
+├── cash.local.json          # 【本機專用，未進版控，見 .gitignore】現金水庫/防禦底牌，供 PG Lightbox 儀表板頂部；公開頁一律打碼，僅 BJSPG_LOCAL_PREVIEW=1 本機顯真數字（見 SDD 6.8、ADR-009）
 ├── notify.local.json        # 【本機專用，未進版控，見 .gitignore】ntfy.sh topic 名稱，供排程完成推播通知使用（見 SDD 6.7、ADR-008）
 ├── notify.sh                 # 排程完成推播通知，雲端 Routine 與本機備援共用實作（2026-08-11 新增，見 SDD 6.7、ADR-008）
 ├── launchd/                 # 【已停用，見 ADR-007】plist 原始檔，原註冊在 ~/Library/LaunchAgents/，僅存檔案作歷史紀錄
 │   ├── com.blackjtsai.bjspg.pre.plist   (平日 08:00)
 │   ├── com.blackjtsai.bjspg.mid.plist   (平日 12:30)
 │   └── com.blackjtsai.bjspg.post.plist  (平日 21:30)
-├── prompts/                 # 各時段分析 prompt，餵給雲端 Routines 執行；皆含「資料正確性鐵律」與「版本控制」段落（自行 git commit/push + web/deploy.sh，失敗即結束不重試，見 ADR-007）；只需把 last_price/limit_range 寫進 state.json，延續數據表由 append_continuity_table.py 決定性附加，不需自己排版
+├── prompts/                 # 各時段分析 prompt，餵給雲端 Routines 執行；皆含「資料正確性鐵律」與「版本控制」段落（自行 git commit/push + web/deploy.sh，失敗即結束不重試，見 ADR-007）；只需把 last_price/limit_range 寫進 state.json，延續數據表由 append_continuity_table.py 決定性附加，不需自己排版；2026-08-13 補 PG 語氣強化/Zero Noise（缺資料隱藏 B 段、聚焦 3~5 檔）/波段目標價僅取 plan.json/報告末尾附 Lightbox 按鈕（見 SDD 6.3、6.8、ADR-009）
 │   ├── PRE.md               # 已實際跑過（含 2026-07-06 正式交易日排程），計算完限價後寫回 state.json 的 last_price/limit_range；2026-08-10 新增排程完成通知步驟（見 SDD 6.7）
 │   ├── MID.md                # 已於 2026-07-04 手動驗證執行一次（休市無新資料），正式交易日情境待 Layer 4；2026-08-10 新增排程完成通知步驟
 │   └── POST.md               # 2026-07-06 21:30 正式交易日執行遇雲端 sandbox 網路故障，報告遺失（見 ADR-007），正式交易日情境待 Layer 4 重新驗證；2026-08-10 新增排程完成通知步驟

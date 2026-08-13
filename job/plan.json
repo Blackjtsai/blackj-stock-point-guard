@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "說明": "PG 股票回補與關注 Lightbox 儀表板的『個人操盤計劃』資料。老大手動維護，排程與前台只讀取。",
+    "資料性質": "非查證·個人操盤計劃。target（波段目標價）與 rebuy_range（回補/低接區間）為老大主觀規劃值，不是任何官方或即時查證數據，前台會以獨立標籤與 live 現價分開呈現（見 SDD 6.3 目標價標籤化例外、6.8 Lightbox 儀表板）。",
+    "ref_price": "使用者填表當下的參考價快照，僅作 state.json 尚無 live 現價時的 fallback；正式呈現以排程 WebFetch 寫入 state.json 的 last_price 為準。"
+  },
+  "groups": {
+    "reload": "剛出清待回補功臣股",
+    "value": "百元內／平價題材戰隊"
+  },
+  "stocks": {
+    "2421": { "group": "reload", "ref_price": "154.50", "target": "165.00", "rebuy_range": "138.0 ～ 142.0", "pg_note": "指標過熱，等拉回測試前波支撐與融資減量。" },
+    "2356": { "group": "reload", "ref_price": "65.70", "target": "72.00", "rebuy_range": "62.0 ～ 63.5", "pg_note": "AI 伺服器動能強，等回踩 10 日線打底。" },
+    "2609": { "group": "reload", "ref_price": "50.60", "target": "55.00", "rebuy_range": "48.5 ～ 50.0", "pg_note": "高殖利率震盪區，接近 49~50 防守區。" },
+    "0052": { "group": "reload", "ref_price": "60.75", "target": "66.00", "rebuy_range": "58.0 ～ 59.0", "pg_note": "跟隨台積電與加權指數築底走勢。" },
+    "0056": { "group": "reload", "ref_price": "51.60", "target": "55.00", "rebuy_range": "50.0 ～ 51.0", "pg_note": "逢拉回尋找年線支撐分批佈局。" },
+    "00878": { "group": "reload", "ref_price": "33.15", "target": "35.50", "rebuy_range": "31.5 ～ 32.0", "pg_note": "準備宣告配息，拉回 31.5~32 為安全防禦區。" },
+    "2330": { "group": "reload", "ref_price": "2405", "target": "2600", "rebuy_range": "2280 ～ 2320", "pg_note": "關注二次回踩時整數關卡支撐。" },
+    "6117": { "group": "value", "ref_price": "87.50", "target": "105.00", "rebuy_range": "80.0 ～ 83.0", "pg_note": "AI 機殼/水冷轉型，融資連減且量縮時爆發力強。" },
+    "4533": { "group": "value", "ref_price": "38.20", "target": "48.00", "rebuy_range": "34.5 ～ 36.0", "pg_note": "低單價沖壓設備，主力拉抬輕快，等止跌訊號。" },
+    "1609": { "group": "value", "ref_price": "52.80", "target": "62.00", "rebuy_range": "48.0 ～ 50.0", "pg_note": "重電綠能實打實業績，拉回籌碼極度穩定。" },
+    "1514": { "group": "value", "ref_price": "112.00", "target": "135.00", "rebuy_range": "102.0 ～ 105.0", "pg_note": "半導體重電設備訂單滿載，回踩尋找主力吸籌。" },
+    "6442": { "group": "value", "ref_price": "95.00", "target": "118.00", "rebuy_range": "88.0 ～ 91.0", "pg_note": "矽光子/光收發模組，百元平價飆股，籌碼洗淨易拉長紅。" },
+    "3450": { "group": "value", "ref_price": "125.00", "target": "150.00", "rebuy_range": "112.0 ～ 116.0", "pg_note": "CPO 夢幻題材，等洗盤量縮至 10 日線。" },
+    "8358": { "group": "value", "ref_price": "68.00", "target": "82.00", "rebuy_range": "62.0 ～ 64.0", "pg_note": "高階 AI 伺服器銅箔，股價便宜，觀察支撐。" },
+    "6213": { "group": "value", "ref_price": "78.00", "target": "92.00", "rebuy_range": "72.0 ～ 74.5", "pg_note": "CCL 銅箔基板材料，法人控盤度高，進退自如。" }
+  }
+}

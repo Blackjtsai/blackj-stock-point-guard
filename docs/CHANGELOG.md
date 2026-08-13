@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-08-13 PG Lightbox 回補儀表板、報告精簡化、波段目標價標籤化例外（ADR-009）
+
+- clone 專案 repo 到開發機（原目錄為空、非 git repo）。
+- 老大提出兩份需求：(1) 報告 PG 語氣強化 + Zero Noise（資料缺漏禁印大表、聚焦 3~5 檔）；(2) 新增 15 檔核心關注/回補對照矩陣 + 現金水庫的 Lightbox 儀表板。實作前盤查出兩處與專案鐵律衝突並先對齊：
+  - **波段目標價 vs 6.3 鐵律**：原「禁止未查證目標價」。老大拍板放寬為標籤化例外——目標價/回補區間由 `job/plan.json` 手動維護、標「非查證·個人操盤計劃」、與 live 現價分區，LLM 不得在正文自行生成。
+  - **公開曝光財務部位 vs 隱私原則**：repo 為 Public、GitHub Pages 公開。老大拍板現金/持股只進 `job/cash.local.json`（gitignore），公開頁一律打碼，僅本機 `BJSPG_LOCAL_PREVIEW=1` 顯真數字，`deploy.sh` 不設此旗標。
+- watchlist 由 24 檔收斂為 15 檔核心標的；新增 `job/plan.json`（進版控）、`job/cash.local.json`（本機專用）。
+- `web/build.py` 新增 `render_pg_dashboard()`：每頁+首頁常駐 Lightbox（純 CSS，無 JS），15 檔分兩組矩陣 + 現金水庫頂部，打碼閘門經 `BJSPG_LOCAL_PREVIEW` 驗證（公開版 `●●●,●●●`、本機版 970,571）。
+- SDD §6.3 強化 PG 語氣 + Zero Noise + 目標價標籤化例外，新增 §6.8 儀表板規格（v0.12→v0.13）；三個 prompt 補 PG 語氣/Zero Noise/聚焦 3~5 檔/Lightbox 按鈕；CLAUDE.md 補 persona + 模組 + 目錄結構；新增 ADR-009；TODO 新增 Layer 5。
+- **code review（high）抓到 2 個 CONFIRMED 隱私外洩並當場修正**：打碼閘門原本只蓋 `total_cash` 與 `market_value`，漏了 (1) `total_cash_note`（內含真實金額字串 `$18,224`）(2) 防禦底牌的名稱/代號/張數（`3045 台灣大哥大 約 3.8 張`）——這兩塊在公開部署（deploy.sh 不設 `BJSPG_LOCAL_PREVIEW`、但本機有 cash.local.json）會明文 push 到 gh-pages，正是 ADR-009 要防的事。已改為整塊只在本機預覽顯示、公開頁打碼；另修 2 個資料韌性問題（group 值 typo 導致標的靜默漏檔 → 收進「其他關注」；watchlist 缺 code/name 會 KeyError 中斷整站建置 → 改安全存取）。
+- 待驗證：Zero Noise「隱藏 B 段」目前靠 prompt 自律非程式強制，需下次實跑確認。
+
 ## 2026-08-10 確認本機備援排程停跑原因（使用者手動關機）、報告語氣風格規範、排程完成推播通知（ADR-008）
 
 - 排查最新報告停在 2026-07-15 的原因：確認本機 Windows Task Scheduler 備援排程（`BJSPG_*_Backup`）設定本身仍在、`Ready` 狀態，並非故障或環境問題——單純是使用者這段期間自己把電腦關機，觸發窗口被錯過。順帶盤點雲端 Routine 的 GitHub App 整合權限（`Contents: Read/Write`）仍是 ❌，此待辦沿用 ADR-007。

@@ -5,7 +5,7 @@
 # 功能說明：掃描 reports/ 下所有 Markdown 報告，轉成靜態 HTML（含首頁列表），輸出到指定目錄供部署到 gh-pages branch
 # 所屬模組：web/（UC-BJSPG 3.2.1 ～ 3.2.2）
 # 建立日期：2026-07-05
-# 修改日期：2026-07-06
+# 修改日期：2026-08-13
 # 開發者　：Claude Code
 # ============================================================
 #
@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -105,6 +106,41 @@ footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
 .badge-sell { background: #c0392b22; color: #a53324; }
 .stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
 
+/* PG 股票回補與關注 Lightbox 儀表板（獨立於單日報告，資料來自 plan.json + state.json + cash.local.json） */
+.pg-btn {
+  display: inline-block; margin: 0 0 1em 0;
+  padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  border: 1px solid #b8860b66; background: #f5c51a1f;
+  font-size: 0.92rem; font-weight: 600;
+}
+.pg-toggle { display: none; }
+.pg-backdrop, .pg-modal { display: none; }
+.pg-toggle:checked ~ .pg-backdrop,
+.pg-toggle:checked ~ .pg-modal { display: block; }
+.pg-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 30; }
+.pg-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 31; background: #fff; color: #1a1a1a;
+  width: min(96vw, 860px); max-height: 88vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+.pg-modal h2 { margin-top: 0; }
+.pg-close { position: absolute; top: 10px; right: 16px; cursor: pointer; font-size: 1.3rem; opacity: 0.6; }
+.pg-close:hover { opacity: 1; }
+.pg-vault {
+  border: 1px solid #b8860b55; border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 16px; background: #f5c51a14;
+}
+.pg-vault-total { font-size: 1.15rem; font-weight: 700; }
+.pg-vault-line { font-size: 0.88rem; opacity: 0.9; margin-top: 4px; }
+.pg-plan-label {
+  font-size: 0.78rem; opacity: 0.75; margin: 0 0 10px;
+  padding: 4px 10px; border-radius: 8px; background: rgba(127,127,127,0.12);
+}
+.pg-group-title { font-size: 1rem; margin: 16px 0 6px; font-weight: 700; }
+td.pg-target { color: #a06a00; font-weight: 600; white-space: nowrap; }
+td.pg-rebuy { white-space: nowrap; }
+
 /* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
    若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
 @media (prefers-color-scheme: dark) {
@@ -118,6 +154,9 @@ footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
   .badge-buy { background: #2ecc7133; color: #7bedac; }
   .badge-hold { background: #ffffff26; color: #ddd; }
   .badge-sell { background: #ff6b6b33; color: #ffabab; }
+  .pg-modal { background: #232323; color: #e6e6e6; }
+  .pg-vault { border-color: #b8860b88; background: #b8860b1f; }
+  td.pg-target { color: #e6b34d; }
 }
 """
 
@@ -365,6 +404,151 @@ def render_summary_modal(md_text: str) -> str:
 """
 
 
+def _load_json(path: Path) -> dict:
+    """讀取 JSON 檔，檔案不存在或解析失敗時回傳空 dict（本機專用檔缺席時降級為原邏輯，不拋錯）"""
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def _mask_amount(value, local_preview: bool) -> str:
+    """把敏感金額轉成呈現字串：本機預覽模式印真數字（千分位），公開產物一律打碼，避免真實資金水位曝光於公開 GitHub Pages（見 SDD 6.8、ADR-009）"""
+    if value in (None, "", 0):
+        return "NT$ ●●●,●●●"
+    if not local_preview:
+        return "NT$ ●●●,●●●"
+    try:
+        return f"NT$ {int(value):,}"
+    except (TypeError, ValueError):
+        return html.escape(str(value))
+
+
+def render_pg_dashboard(project_dir: Path) -> str:
+    """組出「PG 股票回補與關注 Lightbox 儀表板」按鈕 + lightbox（純 CSS，無 JS）。
+    資料來源：job/plan.json（個人操盤計劃：波段目標價/回補區間/PG 戰術，非查證值）、
+    reports/state.json（live 現價 last_price / 建議動作）、job/cash.local.json（現金水庫，本機專用）。
+    現金與持股金額預設打碼，僅在環境變數 BJSPG_LOCAL_PREVIEW=1 的本機建置時渲染真實數字（見 SDD 6.8、ADR-009）。
+    plan.json 不存在時回傳空字串，不顯示按鈕。"""
+    plan = _load_json(project_dir / "job" / "plan.json")
+    plan_stocks = plan.get("stocks") if isinstance(plan, dict) else None
+    if not plan_stocks:
+        return ""
+
+    local_preview = os.environ.get("BJSPG_LOCAL_PREVIEW") == "1"
+    watchlist = {
+        s["code"]: s.get("name", "")
+        for s in _load_json(project_dir / "job" / "watchlist.json").get("stocks", [])
+        if isinstance(s, dict) and s.get("code")
+    }
+    state = _load_json(project_dir / "reports" / "state.json").get("stocks", {})
+    cash = _load_json(project_dir / "job" / "cash.local.json")
+    group_labels = plan.get("groups", {})
+
+    # 現金水庫頂部
+    vault_bits = []
+    if cash:
+        vault_bits.append(
+            f'<div class="pg-vault-total">🛡️ 純現金總水庫：{_mask_amount(cash.get("total_cash"), local_preview)}</div>'
+        )
+        # total_cash_note 內含真實金額字串（如「$18,224」），僅本機預覽顯示，公開頁隱藏（見 ADR-009）
+        if cash.get("total_cash_note") and local_preview:
+            vault_bits.append(f'<div class="pg-vault-line">（{html.escape(str(cash["total_cash_note"]))}）</div>')
+        dc = cash.get("defense_card") or {}
+        if dc:
+            # 防禦底牌的持股代號/名稱/張數/市值同屬敏感部位，整塊只在本機預覽顯示，公開頁一律打碼（見 ADR-009 決策 2）
+            if local_preview:
+                mv = _mask_amount(dc.get("market_value"), local_preview)
+                vault_bits.append(
+                    f'<div class="pg-vault-line">防禦底牌：{html.escape(str(dc.get("name","")))}'
+                    f'（{html.escape(str(dc.get("code","")))}）{html.escape(str(dc.get("shares","")))}，市值約 {mv}</div>'
+                )
+            else:
+                vault_bits.append('<div class="pg-vault-line">防禦底牌：●●●（本機專用，公開頁隱藏）</div>')
+        if cash.get("posture"):
+            vault_bits.append(f'<div class="pg-vault-line">當前姿勢：{html.escape(str(cash["posture"]))}</div>')
+    else:
+        vault_bits.append('<div class="pg-vault-total">🛡️ 大後方現金水庫：本機資料未載入</div>')
+    if not local_preview:
+        vault_bits.append('<div class="pg-vault-line" style="opacity:0.6">（真實金額本機專用，公開頁面一律打碼）</div>')
+    vault_html = f'<div class="pg-vault">{"".join(vault_bits)}</div>'
+
+    # 依 group 分組出表
+    def _rows(group_key: str) -> str:
+        trs = []
+        for code, info in plan_stocks.items():
+            if info.get("group") != group_key:
+                continue
+            name = watchlist.get(code) or state.get(code, {}).get("name") or ""
+            ref = state.get(code, {}).get("last_price") or info.get("ref_price") or "—"
+            trs.append(
+                "<tr>"
+                f"<td>{html.escape(code)}</td>"
+                f"<td>{html.escape(name)}</td>"
+                f"<td>{html.escape(str(ref))}</td>"
+                f'<td class="pg-target">{html.escape(str(info.get("target","—")))}</td>'
+                f'<td class="pg-rebuy">{html.escape(str(info.get("rebuy_range","—")))}</td>'
+                f'<td>{html.escape(str(info.get("pg_note","")))}</td>'
+                "</tr>"
+            )
+        if not trs:
+            return ""
+        return (
+            f'<div class="pg-group-title">{html.escape(group_labels.get(group_key, group_key))}</div>'
+            '<div class="table-wrap"><table><thead><tr>'
+            "<th>代號</th><th>名稱</th><th>參考價</th><th>🎯 波段目標價</th><th>🎯 低接/回補區間</th><th>PG 戰術指令與籌碼觀察</th>"
+            "</tr></thead><tbody>" + "".join(trs) + "</tbody></table></div>"
+        )
+
+    # 先列出 groups 有定義的分組；再把 group 值不在 group_labels 中（未分組/typo）的標的收進「其他關注」，避免靜默漏檔
+    known_groups = list(group_labels)
+    tables = "".join(_rows(g) for g in known_groups)
+    leftover = {
+        code: info for code, info in plan_stocks.items()
+        if info.get("group") not in group_labels
+    }
+    if leftover:
+        tables += (
+            '<div class="pg-group-title">其他關注</div>'
+            + _rows_fallback(leftover, watchlist, state)
+        )
+    if not tables:  # groups 未定義且無 leftover 時的最終保底
+        tables = _rows_fallback(plan_stocks, watchlist, state)
+
+    return f"""
+<input type="checkbox" id="pg-toggle" class="pg-toggle">
+<label for="pg-toggle" class="pg-btn">🔍 開啟 PG 股票回補與關注 Lightbox 儀表板</label>
+<label for="pg-toggle" class="pg-backdrop"></label>
+<div class="pg-modal">
+<label for="pg-toggle" class="pg-close">✕</label>
+<h2>🏀 PG 股票回補與關注儀表板</h2>
+{vault_html}
+<div class="pg-plan-label">🎯 波段目標價／低接回補區間為老大手動維護的「個人操盤計劃」值（非查證數據）；參考價優先取排程查證的 live 現價。僅供參考，不構成投資建議。</div>
+{tables}
+</div>
+"""
+
+
+def _rows_fallback(plan_stocks: dict, watchlist: dict, state: dict) -> str:
+    """plan.json 未定義 groups 時的降級：不分組列成單一表格"""
+    trs = []
+    for code, info in plan_stocks.items():
+        name = watchlist.get(code) or state.get(code, {}).get("name") or ""
+        ref = state.get(code, {}).get("last_price") or info.get("ref_price") or "—"
+        trs.append(
+            "<tr>"
+            f"<td>{html.escape(code)}</td><td>{html.escape(name)}</td><td>{html.escape(str(ref))}</td>"
+            f'<td class="pg-target">{html.escape(str(info.get("target","—")))}</td>'
+            f'<td class="pg-rebuy">{html.escape(str(info.get("rebuy_range","—")))}</td>'
+            f'<td>{html.escape(str(info.get("pg_note","")))}</td></tr>'
+        )
+    return (
+        '<div class="table-wrap"><table><thead><tr>'
+        "<th>代號</th><th>名稱</th><th>參考價</th><th>🎯 波段目標價</th><th>🎯 低接/回補區間</th><th>PG 戰術指令與籌碼觀察</th>"
+        "</tr></thead><tbody>" + "".join(trs) + "</tbody></table></div>"
+    )
+
+
 def find_reports(reports_dir: Path):
     """掃描 reports/ 下所有符合 {HHMM}_{PRE|MID|POST}.md 命名的報告檔，回傳 (date, time, type, path) 清單；reports/ 尚不存在時視為無報告，回傳空清單"""
     if not reports_dir.is_dir():
@@ -381,10 +565,12 @@ def find_reports(reports_dir: Path):
     return reports
 
 
-def build(out_dir: Path, reports_dir: Path):
-    """建置整個靜態網站：每篇報告轉出一頁 HTML，並產生依日期列出所有報告的 index.html"""
+def build(out_dir: Path, reports_dir: Path, project_dir: Path):
+    """建置整個靜態網站：每篇報告轉出一頁 HTML，並產生依日期列出所有報告的 index.html。
+    每頁與首頁固定掛上 PG 股票回補與關注 Lightbox 儀表板（資料來自 project_dir 下的 plan.json/state.json/cash.local.json）"""
     out_dir.mkdir(parents=True, exist_ok=True)
     reports = find_reports(reports_dir)
+    pg_dashboard = render_pg_dashboard(project_dir)
 
     by_date: dict[str, list[tuple[str, str, Path]]] = {}
     for date, time, rtype, md_file in reports:
@@ -395,7 +581,7 @@ def build(out_dir: Path, reports_dir: Path):
         out_html = out_dir / date / f"{time}_{rtype}.html"
         out_html.parent.mkdir(parents=True, exist_ok=True)
         out_html.write_text(
-            page(title, f'<a class="back-link" href="../index.html">← 回首頁</a>{summary_html}\n{body_html}'),
+            page(title, f'<a class="back-link" href="../index.html">← 回首頁</a>{summary_html}{pg_dashboard}\n{body_html}'),
             encoding="utf-8",
         )
         by_date.setdefault(date, []).append((time, rtype, out_html.relative_to(out_dir)))
@@ -417,7 +603,7 @@ def build(out_dir: Path, reports_dir: Path):
 
     index_html = page(
         "BJSPG 台股觀察報告",
-        f"<h1>BJSPG 台股現股觀察報告</h1>\n{index_body}",
+        f"<h1>BJSPG 台股現股觀察報告</h1>\n{pg_dashboard}\n{index_body}",
     )
     (out_dir / "index.html").write_text(index_html, encoding="utf-8")
 
@@ -428,4 +614,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     project_dir = Path(__file__).resolve().parent.parent
-    build(Path(sys.argv[1]), project_dir / "reports")
+    build(Path(sys.argv[1]), project_dir / "reports", project_dir)
