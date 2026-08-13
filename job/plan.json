@@ -16,7 +16,7 @@
     "0056": { "group": "reload", "ref_price": "51.60", "target": "55.00", "rebuy_range": "50.0 ～ 51.0", "pg_note": "逢拉回尋找年線支撐分批佈局。" },
     "00878": { "group": "reload", "ref_price": "33.15", "target": "35.50", "rebuy_range": "31.5 ～ 32.0", "pg_note": "準備宣告配息，拉回 31.5~32 為安全防禦區。" },
     "2330": { "group": "reload", "ref_price": "2405", "target": "2600", "rebuy_range": "2280 ～ 2320", "pg_note": "關注二次回踩時整數關卡支撐。" },
-    "6117": { "group": "value", "ref_price": "87.50", "target": "105.00", "rebuy_range": "80.0 ～ 83.0", "pg_note": "AI 機殼/水冷轉型，融資連減且量縮時爆發力強。" },
+    "6117": { "group": "value", "ref_price": "65.00", "target": "75.00", "rebuy_range": "62.5 ～ 65.0", "pg_note": "8/13 除息約2元(TWSE官方現金股利1.9994已查證)後於62～65低檔築底，緊貼前波低點62鐵板防守；不追今日強彈，等下週月結算(8/19)前二次回踩+量縮打底訊號再分批限價接。" },
     "4533": { "group": "value", "ref_price": "38.20", "target": "48.00", "rebuy_range": "34.5 ～ 36.0", "pg_note": "低單價沖壓設備，主力拉抬輕快，等止跌訊號。" },
     "1609": { "group": "value", "ref_price": "52.80", "target": "62.00", "rebuy_range": "48.0 ～ 50.0", "pg_note": "重電綠能實打實業績，拉回籌碼極度穩定。" },
     "1514": { "group": "value", "ref_price": "112.00", "target": "135.00", "rebuy_range": "102.0 ～ 105.0", "pg_note": "半導體重電設備訂單滿載，回踩尋找主力吸籌。" },
