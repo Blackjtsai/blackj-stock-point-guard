@@ -1,6 +1,6 @@
 # Blueprint — JOB（排程分析）（UC-BJSPG 3.5）
 
-> 版本：v0.13 ／ 最後更新：2026-08-13
+> 版本：v0.14 ／ 最後更新：2026-08-13
 
 ## 技術棧
 
@@ -19,7 +19,7 @@ job/
 ├── run_analysis.sh          # 【已停用，見 ADR-007】原 launchd 呼叫的統一入口，帶 PRE|MID|POST 參數；含 --tools/--allowedTools 權限限制（見 ADR-001）；claude -p 成功後呼叫 append_continuity_table.py，報告 commit/push 後觸發 web/deploy.sh 更新前台網頁。實際排程已改為雲端 Routines，git commit/push 與呼叫 web/deploy.sh 的責任改寫進各 `prompts/*.md`
 ├── append_continuity_table.py  # 決定性附加「延續數據表」到報告檔案末尾，讀 state.json + watchlist.json，不假手 LLM 排版（見 ADR-005、SDD 6.5）
 ├── watchlist.json           # 關注股清單（15 檔），使用者手動編輯新增/移除標的；與 plan.json 代號須一致
-├── plan.json                # 個人操盤計劃：每檔波段目標價/回補區間/PG戰術/分組（進版控，非查證值），供 PG Lightbox 儀表板呈現（見 SDD 6.8、ADR-009）
+├── plan.json                # 個人操盤計劃：每檔波段目標價/回補區間/PG戰術/分組（進版控，非查證值），供 PG Lightbox 儀表板呈現（見 SDD 6.8、ADR-009）；波段目標價可由老大授權以技術面（TWSE/TPEx 日 K 前波高低）代設，標「技術推估非查證」（見 ADR-010）
 ├── holdings.local.json      # 【本機專用，未進版控，見 .gitignore】真實持股成本價快照，使用者手動維護、排程唯讀，供護盾續抱規則使用（見 SDD 6.6）
 ├── cash.local.json          # 【本機專用，未進版控，見 .gitignore】現金水庫/防禦底牌，供 PG Lightbox 儀表板頂部；公開頁一律打碼，僅 BJSPG_LOCAL_PREVIEW=1 本機顯真數字（見 SDD 6.8、ADR-009）
 ├── notify.local.json        # 【本機專用，未進版控，見 .gitignore】ntfy.sh topic 名稱，供排程完成推播通知使用（見 SDD 6.7、ADR-008）
@@ -53,6 +53,7 @@ job/
 
 - 三個時段任務內容不同（見 `docs/design/SDD.md` 第 6.4 節），不可共用同一份 prompt 而不區分
 - 資料抓不到或多來源矛盾時，必須標示「資料未取得／來源不一致」，禁止用推測值填充
+- 個股報價主來源＝ TWSE MIS 官方 API（Bash curl 批次 + python 解析，省 token 零幻覺），WebFetch Yahoo 為 fallback；日 K 前波高低用 TWSE STOCK_DAY／TPEx tradingStock（見 SDD 6.2、ADR-010）。報價與「籌碼數據」分開：籌碼仍走個股頁
 - 查詢 TWSE 融資融券／三大法人資料時，禁止查未篩選代號的全市場總表（`MI_MARGN`、`T86`、`TWT44U` 整份清單，實測不支援單一代號篩選），一律改用個股專屬頁面查詢，主來源失敗時改查第二個個股專屬來源，**兩者皆失敗也只能標示「資料未取得」，任何情況下都不得回退查詢全市場總表**（見 `docs/design/SDD.md` 第 6.2 節、ADR-003）
 - 報告提及除權除息日期／股利數字，必須先用 TWSE 官方除權除息預告表 API 查證，禁止憑訓練知識或沿用舊報告數字斷言（見 `docs/design/SDD.md` 第 6.2 節）
 - 每份報告固定包含 `[CASH_WARNING]` 警語，且只給限價建議、不給市價單追價建議

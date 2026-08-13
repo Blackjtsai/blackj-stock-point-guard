@@ -100,5 +100,7 @@
 | live 現價 | 儀表板「參考價」取 state.json 的 last_price，缺才 fallback plan.json ref_price | 永遠顯示過期 ref_price → 修資料優先序 |
 | Zero Noise | 籌碼缺漏時報告不印 20~30 檔大表、聚焦 3~5 檔 | 仍印全欄位流水帳 → 修 prompt（目前靠 LLM 自律，非程式強制） |
 | 波段目標價 | 僅來自 plan.json、標籤化呈現 | LLM 在正文自行生成目標價 → 違反 6.3 例外邊界，修 prompt |
+| 報價來源（ADR-010） | TWSE MIS API 為主、curl 批次抓、WebFetch Yahoo 為 fallback | 雲端沙盒不能 curl 時未自動降級 → 需修 prompt fallback 邏輯 |
+| 數據誤判防呆 | 與參考值差很大時先換權威來源查證，不直接標「資料未取得」 | 正確資料被誤標 → 違反 ADR-010 原則 |
 
 **依賴**：Layer 3 全部 `[x]`（前台建置鏈路）

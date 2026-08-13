@@ -21,7 +21,9 @@
 - [ ] 老大確認 GitHub Pages 上 Lightbox 現金確實打碼、目標價矩陣呈現正確
 - [x] 個股報價改用 TWSE MIS API（curl+python）為主來源、WebFetch Yahoo 為 fallback（PRE/MID/POST prompt + SDD 6.2 已更新）
 - [ ] **驗證雲端 Routine 沙盒能否 curl `mis.twse.com.tw`**：若不能，排程實跑時會自動 fallback 回 WebFetch Yahoo（已設計降級），但需確認是否真的降級成功、或考慮是否要讓雲端也走 API
-- [ ] 老大重設光聖(6442)/聯鈞(3450)/金居(8358)/聯茂(6213) 的 plan.json target/rebuy_range（原值基於錯誤參考價，已暫標「待重設」，ref_price 已修真）
+- [x] 光聖(6442)/聯鈞(3450)/金居(8358)/聯茂(6213) 的 plan.json target/rebuy_range 重設完成（老大授權，以 TWSE/TPEx 日 K 前波高低技術面設定，標「技術推估非查證」，見 ADR-010）
+- [x] 6117 迎廣除息後修正低接/目標（TWSE 官方查證現金股利 1.9994 元）
+- [ ] 老大逐檔複核 plan.json 波段目標價（4 檔技術面代設值僅供參考，保留覆寫權）
 
 ## Layer 1：環境建置與排程骨架（UC-BJSPG 3.1.1 ～ 3.1.3）
 

@@ -8,7 +8,7 @@ graph TD
     LB[Windows Task Scheduler<br/>本機備援，同時段觸發<br/>見 ADR-007/SETUP.md] -->|呼叫| RS[run_analysis_local_backup.sh<br/>claude -p 無 Bash 權限]
     RS -->|headless 分析，僅能 Write/Edit/WebFetch| C
     RS -->|確定性執行：commit/push<br/>不假手 LLM| G
-    C -->|WebFetch| D[公開資料來源<br/>證交所/Yahoo奇摩股市/財經新聞]
+    C -->|報價: Bash curl TWSE MIS/STOCK_DAY、TPEx（主，見 ADR-010）<br/>WebFetch Yahoo（fallback）+ 總經/籌碼| D[公開資料來源<br/>TWSE MIS/STOCK_DAY、TPEx、Yahoo奇摩股市、財經新聞]
     WL[job/watchlist.json<br/>關注股清單 15 檔] -->|讀取| C
     IB[job/inbox/links.md<br/>YouTube/新聞連結] -->|讀取/標記已處理| C
     HL[job/holdings.local.json<br/>真實成本價<br/>本機專用/未進版控] -->|唯讀| C
