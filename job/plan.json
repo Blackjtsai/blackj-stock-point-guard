@@ -20,9 +20,9 @@
     "4533": { "group": "value", "ref_price": "38.20", "target": "48.00", "rebuy_range": "34.5 ～ 36.0", "pg_note": "低單價沖壓設備，主力拉抬輕快，等止跌訊號。" },
     "1609": { "group": "value", "ref_price": "52.80", "target": "62.00", "rebuy_range": "48.0 ～ 50.0", "pg_note": "重電綠能實打實業績，拉回籌碼極度穩定。" },
     "1514": { "group": "value", "ref_price": "112.00", "target": "135.00", "rebuy_range": "102.0 ～ 105.0", "pg_note": "半導體重電設備訂單滿載，回踩尋找主力吸籌。" },
-    "6442": { "group": "value", "ref_price": "95.00", "target": "118.00", "rebuy_range": "88.0 ～ 91.0", "pg_note": "矽光子/光收發模組，百元平價飆股，籌碼洗淨易拉長紅。" },
-    "3450": { "group": "value", "ref_price": "125.00", "target": "150.00", "rebuy_range": "112.0 ～ 116.0", "pg_note": "CPO 夢幻題材，等洗盤量縮至 10 日線。" },
-    "8358": { "group": "value", "ref_price": "68.00", "target": "82.00", "rebuy_range": "62.0 ～ 64.0", "pg_note": "高階 AI 伺服器銅箔，股價便宜，觀察支撐。" },
-    "6213": { "group": "value", "ref_price": "78.00", "target": "92.00", "rebuy_range": "72.0 ～ 74.5", "pg_note": "CCL 銅箔基板材料，法人控盤度高，進退自如。" }
+    "6442": { "group": "value", "ref_price": "1595", "target": "待重設", "rebuy_range": "待重設", "pg_note": "矽光子/光收發模組；原計劃值基於錯誤參考價(95)，實際昨收 1595，target/回補區間待老大重設。" },
+    "3450": { "group": "value", "ref_price": "507", "target": "待重設", "rebuy_range": "待重設", "pg_note": "CPO 夢幻題材；原計劃值基於錯誤參考價(125)，實際昨收 507，target/回補區間待老大重設。" },
+    "8358": { "group": "value", "ref_price": "418.5", "target": "待重設", "rebuy_range": "待重設", "pg_note": "高階 AI 伺服器銅箔；原計劃值基於錯誤參考價(68)，實際昨收 418.5，target/回補區間待老大重設。" },
+    "6213": { "group": "value", "ref_price": "464", "target": "待重設", "rebuy_range": "待重設", "pg_note": "CCL 銅箔基板材料；原計劃值基於錯誤參考價(78)，實際昨收 464，target/回補區間待老大重設。" }
   }
 }
