@@ -14,7 +14,7 @@
 
 ## 本時段任務
 
-1. 用 WebFetch 查詢大盤加權指數與 watchlist 個股目前股價。**報告中必須註明資料可能有延遲，不代表即時 tick**。
+1. 查詢大盤加權指數與 watchlist 個股目前股價。**報價主來源優先用 Bash `curl` 打 TWSE MIS API 批次抓**（省 token 零幻覺，端點與欄位同 PRE.md 任務 4：`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&ex_ch=tse_XXXX.tw|...`，帶 `Referer: https://mis.twse.com.tw/stock/index.jsp`，加權指數用 `tse_t00.tw`，用 `z` 盤中價、`y` 昨收）；Bash 不可用或 API 失敗才 fallback WebFetch Yahoo 個股頁。**報告中必須註明資料可能有延遲，不代表即時 tick**。
 2. 比對 08:00 報告中的建議限價區間，推測該價位是否已被觸及（成交與否只能用「推測」語氣，不能斷言「已成交」）。
 3. 若大盤盤中出現顯著急跌（例如明顯偏離早盤水位），評估是否建議撤單觀望；否則明確寫「維持早盤建議」。
 

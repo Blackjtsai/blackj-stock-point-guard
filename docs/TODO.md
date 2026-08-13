@@ -17,8 +17,11 @@
 - [x] `job/prompts/{PRE,MID,POST}.md` 加入 PG 語氣/Zero Noise/聚焦 3~5 檔/Lightbox 按鈕
 - [x] CLAUDE.md 補 persona + Zero Noise + Lightbox 模組 + 目錄結構
 - [x] 新增 ADR-009
-- [ ] 排程實跑一次驗證 PG 語氣與 Zero Noise 生效、Lightbox 現價正確帶入
+- [x] 手動重跑 2026-08-13 PRE 驗證 PG 語氣/Zero Noise/Lightbox（發現並修正打碼盲點、4 檔誤標）
 - [ ] 老大確認 GitHub Pages 上 Lightbox 現金確實打碼、目標價矩陣呈現正確
+- [x] 個股報價改用 TWSE MIS API（curl+python）為主來源、WebFetch Yahoo 為 fallback（PRE/MID/POST prompt + SDD 6.2 已更新）
+- [ ] **驗證雲端 Routine 沙盒能否 curl `mis.twse.com.tw`**：若不能，排程實跑時會自動 fallback 回 WebFetch Yahoo（已設計降級），但需確認是否真的降級成功、或考慮是否要讓雲端也走 API
+- [ ] 老大重設光聖(6442)/聯鈞(3450)/金居(8358)/聯茂(6213) 的 plan.json target/rebuy_range（原值基於錯誤參考價，已暫標「待重設」，ref_price 已修真）
 
 ## Layer 1：環境建置與排程骨架（UC-BJSPG 3.1.1 ～ 3.1.3）
 

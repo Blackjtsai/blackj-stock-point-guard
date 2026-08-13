@@ -14,7 +14,14 @@
 1. 用 WebFetch 查詢美股費城半導體指數（SOX）、WTI 原油最新收盤數據。
 2. 用 WebFetch 查詢日本日經 225 指數（`finance.yahoo.com/quote/%5EN225`）與韓國 KOSPI 指數（`finance.yahoo.com/quote/%5EKS11`）目前即時漲跌幅——日韓股市開市時間（09:00 當地）比台股（09:00 台灣時間）早 1 小時，本時段執行時兩地已開盤約數十分鐘至 1 小時，其盤中走勢可作為台股開盤前的區域市場情緒參考，於 A 段總經底座一併呈現；抓不到就標示「資料未取得」，不可用臆測填充。
 3. 因為今日籌碼數據尚未公告，讀取前一交易日的融資融券、三大法人籌碼結論（可從前一份 `reports/` 報告或 `reports/state.json` 取得；若都沒有，如實標示「無前一日籌碼資料」）。
-4. 針對 watchlist 每一檔股票，用 WebFetch 查詢即時股價（建議來源：`https://tw.stock.yahoo.com/quote/{代號}.TW`，或其他可靠公開頁面），計算「金字塔限價低接區間」與「高位停利區間」。
+4. 針對 watchlist 每一檔股票查詢即時股價，計算「金字塔限價低接區間」與「高位停利區間」。**報價來源優先序**：
+   - **主來源（優先，省 token 且零幻覺）**：用 Bash `curl` 打 TWSE MIS 官方即時報價 JSON API，一次批次抓完整份 watchlist，再用 `python3` 解析：
+     ```bash
+     curl -s "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&delay=0&ex_ch=tse_2330.tw|otc_8358.tw|..." -H "Referer: https://mis.twse.com.tw/stock/index.jsp"
+     ```
+     欄位：`y`=昨收（盤前定錨用此）、`z`=最新成交（無 tick 時為 `-`，改用 `y`）、`n`=名稱、`c`=代號。市場前綴上市用 `tse_`、上櫃用 `otc_`；不確定先 `tse_`，回傳該檔 name 為空再改 `otc_` 重查。**務必比對回傳 `c`/`n` 與 watchlist 代號名稱相符才採用**。
+   - **Fallback（Bash 不可用或 API 失敗時才用）**：WebFetch 個股頁 `https://tw.stock.yahoo.com/quote/{代號}.TW`，並明確要求「找不到就回報找不到，不可猜測」。
+   - **重要**：數字與預期差很大時，不要直接判「資料可疑」就標資料未取得——先換來源查證（TWSE API 為權威），只有多來源都失敗/矛盾才標「資料未取得」。
 5. 若報告會提及任何代號的除權除息日期或股利數字，用 WebFetch 查證 TWSE 官方除權除息預告表 API（`https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json`）取得該代號的正式記錄，不可沿用前一份報告或訓練知識中的舊數字；查不到對應代號則標示「除權息資料未取得」。
 6. 針對 `job/holdings.local.json` 中有記錄的代號，依 SDD 6.6 節計算安全墊 `(現價 - cost_basis) / cost_basis`，決定該代號 C 段是否可給「高位停利變現」。
 
