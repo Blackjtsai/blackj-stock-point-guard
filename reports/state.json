@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-18T08:00:00+08:00",
+  "last_updated": "2026-08-18T12:30:00+08:00",
   "stocks": {
     "3702": {
       "name": "大聯大",
@@ -16,7 +16,7 @@
       "last_action_time": "2026-08-18T08:00:00+08:00",
       "last_report": "reports/2026-08-18/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "66.70",
+      "last_price": "64.8",
       "limit_range": "61.5-63.0"
     },
     "2609": {
@@ -34,7 +34,7 @@
       "last_action_time": "2026-08-18T08:00:00+08:00",
       "last_report": "reports/2026-08-18/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "148.00",
+      "last_price": "145.0",
       "limit_range": "143.0-147.0"
     },
     "0052": {
@@ -70,7 +70,7 @@
       "last_action_time": "2026-08-18T08:00:00+08:00",
       "last_report": "reports/2026-08-18/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "2400.5",
+      "last_price": "2380",
       "limit_range": "2265-2320"
     },
     "6757": {
@@ -151,7 +151,7 @@
       "last_action_time": "2026-08-18T08:00:00+08:00",
       "last_report": "reports/2026-08-18/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "62.80",
+      "last_price": "61.5",
       "limit_range": "62.5-64.0"
     },
     "4533": {
@@ -178,7 +178,7 @@
       "last_action_time": "2026-08-18T08:00:00+08:00",
       "last_report": "reports/2026-08-18/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "102.00",
+      "last_price": "100.0",
       "limit_range": "97.0-99.0"
     },
     "6442": {
