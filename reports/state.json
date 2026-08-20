@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-20T08:00:00+08:00",
+  "last_updated": "2026-08-20T12:30:00+08:00",
   "stocks": {
     "3702": {
       "name": "大聯大",
@@ -88,7 +88,7 @@
       "last_action_time": "2026-08-20T08:00:00+08:00",
       "last_report": "reports/2026-08-20/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "145.00",
+      "last_price": "144.00",
       "limit_range": "143.0-147.0"
     },
     "2356": {
@@ -133,7 +133,7 @@
       "last_action_time": "2026-08-20T08:00:00+08:00",
       "last_report": "reports/2026-08-20/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "32.30",
+      "last_price": "32.07",
       "limit_range": "31.5-32.0"
     },
     "2330": {
@@ -142,7 +142,7 @@
       "last_action_time": "2026-08-20T08:00:00+08:00",
       "last_report": "reports/2026-08-20/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "2350",
+      "last_price": "2365",
       "limit_range": "2265-2320"
     },
     "6117": {
@@ -178,7 +178,7 @@
       "last_action_time": "2026-08-20T08:00:00+08:00",
       "last_report": "reports/2026-08-20/0800_PRE.md",
       "pending_rebuy": false,
-      "last_price": "99.50",
+      "last_price": "101.00",
       "limit_range": "97.0-99.0"
     },
     "6442": {
