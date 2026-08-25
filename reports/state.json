@@ -1,13 +1,13 @@
 {
-  "last_updated": "2026-08-25T08:00:00+08:00",
+  "last_updated": "2026-08-25T12:30:00+08:00",
   "stocks": {
     "2421": {
       "name": "建準",
       "last_action": "觀望看戲",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "143.5",
+      "last_price": "142.0",
       "limit_range": "138.0-142.0"
     },
     "2356": {
@@ -50,9 +50,9 @@
       "name": "國泰永續高股息",
       "last_action": "金字塔低接",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "32.43",
+      "last_price": "32.50",
       "limit_range": "31.5-32.0"
     },
     "2330": {
@@ -68,18 +68,18 @@
       "name": "迎廣",
       "last_action": "金字塔低接",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "61.00",
+      "last_price": "61.90",
       "limit_range": "60.0-62.0"
     },
     "4533": {
       "name": "協易機",
       "last_action": "金字塔低接",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "25.90",
+      "last_price": "25.35",
       "limit_range": "25.0-26.0"
     },
     "1609": {
@@ -95,18 +95,18 @@
       "name": "亞力",
       "last_action": "金字塔低接",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "101.50",
+      "last_price": "100.5",
       "limit_range": "97.0-99.0"
     },
     "6442": {
       "name": "光聖",
       "last_action": "觀望看戲",
       "last_action_time": "2026-08-25T08:00:00+08:00",
-      "last_report": "reports/2026-08-25/0800_PRE.md",
+      "last_report": "reports/2026-08-25/1230_MID.md",
       "pending_rebuy": false,
-      "last_price": "1460",
+      "last_price": "1525",
       "limit_range": "1370-1405"
     },
     "3450": {
