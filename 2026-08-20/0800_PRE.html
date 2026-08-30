@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026-08-20 0800 盤前報告（PRE）</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+  line-height: 1.7;
+  background: #fafafa; color: #1a1a1a;
+}
+.container { max-width: 780px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.2rem; margin-top: 2em; border-bottom: 2px solid currentColor; padding-bottom: 4px; }
+h3 { font-size: 1.05rem; margin-top: 1.5em; }
+a { color: #0645ad; text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+blockquote {
+  margin: 1em 0; padding: 8px 14px;
+  border-left: 4px solid #c00; background: #fff0f0;
+}
+code {
+  background: rgba(127,127,127,0.15);
+  padding: 1px 5px; border-radius: 4px;
+  font-size: 0.9em;
+}
+.table-wrap { overflow-x: auto; margin: 1em 0; }
+table { border-collapse: collapse; width: 100%; min-width: 320px; }
+th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; font-size: 0.95rem; }
+th { background: rgba(127,127,127,0.15); }
+.back-link { display: inline-block; margin-bottom: 1em; font-size: 0.9rem; }
+.index-date { margin-top: 1.6em; }
+.index-date h2 { margin-bottom: 0.4em; border: none; }
+.index-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; flex-wrap: wrap; }
+.index-list li a {
+  display: inline-block; padding: 8px 14px;
+  border: 1px solid rgba(127,127,127,0.4); border-radius: 8px;
+}
+.empty-state { margin-top: 3em; text-align: center; opacity: 0.7; }
+footer { margin-top: 3em; font-size: 0.8rem; opacity: 0.6; }
+
+.summary-btn {
+  display: inline-block; margin: 0 0 1em 10px;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(127,127,127,0.4);
+  background: rgba(127,127,127,0.12); font-size: 0.9rem;
+}
+.summary-toggle { display: none; }
+.summary-backdrop, .summary-modal { display: none; }
+.summary-toggle:checked ~ .summary-backdrop,
+.summary-toggle:checked ~ .summary-modal { display: block; }
+.summary-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 20; }
+.summary-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 21; background: #fff; color: #1a1a1a;
+  width: min(92vw, 480px); max-height: 82vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.summary-modal h2 { margin-top: 0; }
+.summary-close {
+  position: absolute; top: 10px; right: 16px; cursor: pointer;
+  font-size: 1.3rem; opacity: 0.6;
+}
+.summary-close:hover { opacity: 1; }
+.stock-card {
+  border: 1px solid rgba(127,127,127,0.3); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 10px;
+}
+.stock-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stock-card-head strong { font-size: 1.05rem; }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+}
+.badge-buy { background: #16833e22; color: #0f6b31; }
+.badge-hold { background: #77777730; color: #555; }
+.badge-sell { background: #c0392b22; color: #a53324; }
+.stock-card-body { margin-top: 6px; font-size: 0.88rem; opacity: 0.9; }
+
+/* PG 股票回補與關注 Lightbox 儀表板（獨立於單日報告，資料來自 plan.json + state.json + cash.local.json） */
+.pg-btn {
+  display: inline-block; margin: 0 0 1em 0;
+  padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  border: 1px solid #b8860b66; background: #f5c51a1f;
+  font-size: 0.92rem; font-weight: 600;
+}
+.pg-toggle { display: none; }
+.pg-backdrop, .pg-modal { display: none; }
+.pg-toggle:checked ~ .pg-backdrop,
+.pg-toggle:checked ~ .pg-modal { display: block; }
+.pg-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 30; }
+.pg-modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 31; background: #fff; color: #1a1a1a;
+  width: min(96vw, 860px); max-height: 88vh; overflow-y: auto;
+  border-radius: 14px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+.pg-modal h2 { margin-top: 0; }
+.pg-close { position: absolute; top: 10px; right: 16px; cursor: pointer; font-size: 1.3rem; opacity: 0.6; }
+.pg-close:hover { opacity: 1; }
+.pg-vault {
+  border: 1px solid #b8860b55; border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 16px; background: #f5c51a14;
+}
+.pg-vault-total { font-size: 1.15rem; font-weight: 700; }
+.pg-vault-line { font-size: 0.88rem; opacity: 0.9; margin-top: 4px; }
+.pg-plan-label {
+  font-size: 0.78rem; opacity: 0.75; margin: 0 0 10px;
+  padding: 4px 10px; border-radius: 8px; background: rgba(127,127,127,0.12);
+}
+.pg-group-title { font-size: 1rem; margin: 16px 0 6px; font-weight: 700; }
+td.pg-target { color: #a06a00; font-weight: 600; white-space: nowrap; }
+td.pg-rebuy { white-space: nowrap; }
+
+/* Dark-mode 覆寫必須放在最後：CSS 對相同選擇器的優先權以「後寫者贏」，
+   若放在對應的淺色規則之前，會被後面的淺色規則蓋掉而失效（曾經發生過的真實 bug）。 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e6e6e6; }
+  a { color: #7cb8ff; }
+  hr { border-color: #444; }
+  blockquote { border-color: #ff6b6b; background: #33201f; color: #f2d9d9; }
+  table { border-color: #444; }
+  th, td { border-color: #444; }
+  .summary-modal { background: #232323; color: #e6e6e6; }
+  .badge-buy { background: #2ecc7133; color: #7bedac; }
+  .badge-hold { background: #ffffff26; color: #ddd; }
+  .badge-sell { background: #ff6b6b33; color: #ffabab; }
+  .pg-modal { background: #232323; color: #e6e6e6; }
+  .pg-vault { border-color: #b8860b88; background: #b8860b1f; }
+  td.pg-target { color: #e6b34d; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="back-link" href="../index.html">← 回首頁</a>
+<input type="checkbox" id="pg-toggle" class="pg-toggle">
+<label for="pg-toggle" class="pg-btn">🔍 開啟 PG 股票回補與關注 Lightbox 儀表板</label>
+<label for="pg-toggle" class="pg-backdrop"></label>
+<div class="pg-modal">
+<label for="pg-toggle" class="pg-close">✕</label>
+<h2>🏀 PG 股票回補與關注儀表板</h2>
+<div class="pg-vault"><div class="pg-vault-total">🛡️ 大後方現金水庫：本機資料未載入</div><div class="pg-vault-line" style="opacity:0.6">（真實金額本機專用，公開頁面一律打碼）</div></div>
+<div class="pg-plan-label">🎯 波段目標價／低接回補區間為老大手動維護的「個人操盤計劃」值（非查證數據）；參考價優先取排程查證的 live 現價。僅供參考，不構成投資建議。</div>
+<div class="pg-group-title">剛出清待回補功臣股</div><div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>參考價</th><th>🎯 波段目標價</th><th>🎯 低接/回補區間</th><th>PG 戰術指令與籌碼觀察</th></tr></thead><tbody><tr><td>2421</td><td>建準</td><td>163.54</td><td class="pg-target">165.00</td><td class="pg-rebuy">138.0 ～ 142.0</td><td>指標過熱，等拉回測試前波支撐與融資減量。</td></tr><tr><td>2356</td><td>英業達</td><td>64.90</td><td class="pg-target">72.00</td><td class="pg-rebuy">62.0 ～ 63.5</td><td>AI 伺服器動能強，等回踩 10 日線打底。</td></tr><tr><td>2609</td><td>陽明</td><td>56.20</td><td class="pg-target">55.00</td><td class="pg-rebuy">48.5 ～ 50.0</td><td>高殖利率震盪區，接近 49~50 防守區。</td></tr><tr><td>0052</td><td>富邦科技</td><td>62.35</td><td class="pg-target">66.00</td><td class="pg-rebuy">58.0 ～ 59.0</td><td>跟隨台積電與加權指數築底走勢。</td></tr><tr><td>0056</td><td>元大高股息</td><td>53.85</td><td class="pg-target">55.00</td><td class="pg-rebuy">50.0 ～ 51.0</td><td>逢拉回尋找年線支撐分批佈局。</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>33.00</td><td class="pg-target">35.50</td><td class="pg-rebuy">31.5 ～ 32.0</td><td>準備宣告配息，拉回 31.5~32 為安全防禦區。</td></tr><tr><td>2330</td><td>台積電</td><td>2420</td><td class="pg-target">2600</td><td class="pg-rebuy">2280 ～ 2320</td><td>關注二次回踩時整數關卡支撐。</td></tr></tbody></table></div><div class="pg-group-title">百元內／平價題材戰隊</div><div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>參考價</th><th>🎯 波段目標價</th><th>🎯 低接/回補區間</th><th>PG 戰術指令與籌碼觀察</th></tr></thead><tbody><tr><td>6117</td><td>迎廣</td><td>63.00</td><td class="pg-target">75.00</td><td class="pg-rebuy">62.5 ～ 65.0</td><td>8/13 除息約2元(TWSE官方現金股利1.9994已查證)後於62～65低檔築底，緊貼前波低點62鐵板防守；不追今日強彈，等下週月結算(8/19)前二次回踩+量縮打底訊號再分批限價接。</td></tr><tr><td>4533</td><td>協易機</td><td>26.50</td><td class="pg-target">48.00</td><td class="pg-rebuy">34.5 ～ 36.0</td><td>低單價沖壓設備，主力拉抬輕快，等止跌訊號。</td></tr><tr><td>1609</td><td>大亞</td><td>38.10</td><td class="pg-target">62.00</td><td class="pg-rebuy">48.0 ～ 50.0</td><td>重電綠能實打實業績，拉回籌碼極度穩定。</td></tr><tr><td>1514</td><td>亞力</td><td>105.00</td><td class="pg-target">135.00</td><td class="pg-rebuy">102.0 ～ 105.0</td><td>半導體重電設備訂單滿載，回踩尋找主力吸籌。</td></tr><tr><td>6442</td><td>光聖</td><td>1615</td><td class="pg-target">1710</td><td class="pg-rebuy">1175 ～ 1230</td><td>矽光子/光收發；8月由1175暴衝至1595、現貼波段高＝追高區。目標=7月前高1710(壓力)，低接網掛真鐵板8月低1175區，現在不追、等大回踩分批接。目標為前波高技術推估非查證。</td></tr><tr><td>3450</td><td>聯鈞</td><td>635</td><td class="pg-target">555</td><td class="pg-rebuy">382 ～ 410</td><td>CPO題材；8月由382暴衝至527、現507近波段高。目標=7月前高555(壓力)，低接鐵板=8月低382區，追高風險大、等回踩再分批接。目標為前波高技術推估非查證。</td></tr><tr><td>8358</td><td>金居</td><td>543</td><td class="pg-target">639</td><td class="pg-rebuy">298 ～ 330</td><td>高階AI伺服器銅箔(上櫃)；7月曾摜至639後跌到8月低298、現反彈418.5，波動極大。目標=7月前高639(大壓力)，低接鐵板=8月低298區，回鐵板才接、現在別追。目標為前波高技術推估非查證。</td></tr><tr><td>6213</td><td>聯茂</td><td>582</td><td class="pg-target">500</td><td class="pg-rebuy">285 ～ 320</td><td>CCL銅箔基板；8月創新高475(已破7月高424.5)、現464，無前波壓力。目標看突破475前高後500整數關，低接鐵板=8月低285區；創高股不追、等回踩。目標500為突破量測非查證。</td></tr></tbody></table></div>
+</div>
+
+<h1>🏀 BJSPG 盤前分析 2026-08-20 08:00 PRE</h1>
+<blockquote><strong>報告產出時間</strong>：2026-08-20 08:00 PRE <strong>資料說明</strong>： - 昨收股價（2026-08-19 收盤）：Yahoo 奇摩股市個股頁 WebFetch 查證（2421/1514/2330/2356 已個別核實，今日成交欄=8/19 收盤）；其餘 11 檔沿用 state.json 昨日 POST 確認值——TWSE MIS 官方 API 需 Bash 執行，本時段 Bash 不可用，改用 Yahoo 個股頁 fallback - B 段籌碼：沿用前一交易日（2026-08-19）POST 報告已查證之法人數據；盤前不另行重查（21:30 POST 才有當日正式公告） - SOX / WTI：finance.yahoo.com（SOX 為 2026-08-19 美國收盤） - 日經 225 / KOSPI：finance.yahoo.com 盤中即時（今日開盤已約 1 小時） - <code>job/holdings.local.json</code> 不存在，本次無護盾續抱規則，各標的依原始三態邏輯判斷</blockquote>
+<hr>
+<h2>⚠️ A 段｜盤前總經底座——亞洲市場全面重挫</h2>
+<div class="table-wrap"><table><thead><tr><th>指標</th><th>數值</th><th>備註</th></tr></thead><tbody><tr><td>日經 225（今日盤中）</td><td><strong>65,326.42</strong>（<strong>-3.16%</strong>）</td><td>日本開盤已逾 1 小時，持續走弱</td></tr><tr><td>KOSPI（今日盤中）</td><td><strong>6,471.17</strong>（<strong>-5.80%</strong>）</td><td>韓國罕見大跌，區域風險急升</td></tr><tr><td>SOX 費半（2026-08-19 美國收盤）</td><td><strong>11,738.23</strong>（<strong>-2.12%</strong>）</td><td>繼 8/18 的 -4.98% 後再跌；兩日累跌逾 -7%</td></tr><tr><td>WTI 原油</td><td><strong>$84.33</strong>（<strong>-0.07%</strong>）</td><td>近中性，非此次下跌推手</td></tr><tr><td>台加權（2026-08-19 收盤）</td><td><strong>44,719</strong>（昨收，-1.30%）</td><td>今日開盤方向待 09:00 確認</td></tr></tbody></table></div>
+<p>老大，今天的盤前信號要正視。KOSPI -5.80% 是 2025 年以來罕見的單日重挫，搭配日經 -3.16%、SOX 兩日累跌 -7%——三個核心指標同步走弱，台股今日開盤出現 2~4% 跌幅的概率相當高。這不是要你慌，PG 永遠不追市價單；這是要你現在就把限價單掛好，讓市場帶著籌碼來接棒。</p>
+<blockquote>注意：台加權若今日跌幅達 3% 以上，或 SOX 若今晚再跌 5%+，將觸及系統性風險警示線。12:30 MID 複核時再確認是否調整操盤方向。</blockquote>
+<hr>
+<h2>🗂️ B 段｜前一交易日籌碼（2026-08-19，盤前沿用）</h2>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>外資</th><th>投信</th><th>自營商</th><th>三大合計</th><th>融資增減</th></tr></thead><tbody><tr><td>2421</td><td>建準</td><td>-99</td><td>-2</td><td>-89</td><td><strong>-190</strong></td><td>資料未取得</td></tr><tr><td>2330</td><td>台積電</td><td>-7,418</td><td>-668</td><td>+719</td><td><strong>-7,367</strong></td><td>資料未取得</td></tr><tr><td>1514</td><td>亞力</td><td>+62</td><td>-1</td><td>+8</td><td><strong>+69</strong></td><td>資料未取得</td></tr><tr><td>3450</td><td>聯鈞</td><td>-1,789</td><td>+2,161</td><td>-33</td><td><strong>+339</strong></td><td>資料未取得</td></tr><tr><td>其餘 11 檔</td><td>—</td><td>—</td><td>—</td><td>—</td><td>資料未取得（昨日 POST 個股頁未取得）</td><td>資料未取得</td></tr></tbody></table></div>
+<hr>
+<h2>🎯 C 段｜建議動作（今日有訊號的 4 檔）</h2>
+<h3>🔴 台積電 2330 ─【金字塔低接】升級｜射程確認，限價單就位</h3>
+<div class="table-wrap"><table><thead><tr><th>項目</th><th>數值</th></tr></thead><tbody><tr><td>昨收（2026-08-19）</td><td><strong>2,350</strong>（Yahoo 個股頁核實）</td></tr><tr><td>金字塔限價低接區</td><td><strong>2,265 ～ 2,320</strong></td></tr><tr><td>觸及上緣需跌幅</td><td>約 -1.3%（今日環境下高概率觸及）</td></tr><tr><td>前日三大法人</td><td>外資 <strong>-7,418</strong>，投信 -668，自營 +719，合計 <strong>-7,367</strong></td></tr></tbody></table></div>
+<p>外資昨日重砍 7,418 張，力道大但不排除是系統性拋售（韓日機構也在拋）。今日若台股跌 1.3% 以上，2330 正式進入 2,265~2,320 射程。<strong>不追跌，限價掛在 2,265~2,320</strong>；若今日觸及下緣 2,265，那是大盤恐慌性拋售的進場禮物，分批接不急。12:30 MID 複核實際成交情況。</p>
+<hr>
+<h3>🔵 亞力 1514 ─【金字塔低接】升級｜100 已破，射程就在 0.5% 外</h3>
+<div class="table-wrap"><table><thead><tr><th>項目</th><th>數值</th></tr></thead><tbody><tr><td>昨收（2026-08-19）</td><td><strong>99.50</strong>（Yahoo 個股頁核實）</td></tr><tr><td>金字塔限價低接區</td><td><strong>97.0 ～ 99.0</strong></td></tr><tr><td>觸及上緣需跌幅</td><td>約 -0.5%（今日幾乎確定觸及）</td></tr><tr><td>前日三大法人</td><td>外資 <strong>+62</strong>，投信 -1，自營 +8，合計 <strong>+69</strong></td></tr></tbody></table></div>
+<p>整數 100 昨日失守，今日亞洲大跌環境，0.5% 跌幅即進 99~97 射程。法人昨日仍小幅買超 +69，基本面未見棄守。<strong>建議分兩批</strong>：第一批限價掛 98~99（上緣），第二批掛 97~98（下緣），讓市場恐慌帶著好貨來。</p>
+<hr>
+<h3>🔵 建準 2421 ─【金字塔低接】維持｜已在網內，今日下半段更優</h3>
+<div class="table-wrap"><table><thead><tr><th>項目</th><th>數值</th></tr></thead><tbody><tr><td>昨收（2026-08-19）</td><td><strong>145.00</strong>（Yahoo 個股頁核實）</td></tr><tr><td>金字塔限價低接區</td><td><strong>143.0 ～ 147.0</strong></td></tr><tr><td>前日三大法人</td><td>外資 -99，自營 -89，合計 <strong>-190</strong>（幅度小）</td></tr></tbody></table></div>
+<p>145.00 昨日收盤在限價網內。今日系統性下跌，預計觸及 143~145 下半段，是更優先的進場位。前日法人轉賣 -190 幅度尚小，不構成暫停低接的依據；<strong>但若今日看到第二日連續大幅賣超（合計超過 -500），MID 報告再重評節奏</strong>。</p>
+<hr>
+<h3>🟡 00878 國泰永續高股息 ─【金字塔低接】升級｜除息後回補射程觸手可及</h3>
+<div class="table-wrap"><table><thead><tr><th>項目</th><th>數值</th></tr></thead><tbody><tr><td>昨收（2026-08-19）</td><td><strong>32.30</strong></td></tr><tr><td>金字塔限價低接區</td><td><strong>31.5 ～ 32.0</strong></td></tr><tr><td>觸及上緣需跌幅</td><td>約 -0.93%（今日幾乎確定觸及）</td></tr><tr><td>除息備註</td><td>2026-08-18 除息（現金股利 1.01 元，已於昨日 POST 由 TWSE TWT48U 確認）</td></tr></tbody></table></div>
+<p>32.30 距回補區 31.5~32.0 僅 0.30 元，今日 0.93% 跌幅即進上緣。除息後首週，用亞洲系統性拋售壓力換低成本回補位——正是 PG 在等的好球。<strong>限價單掛 31.5~32.0</strong>，不追現價。</p>
+<hr>
+<h2>💰 D 段｜資金安全警語與回補提示</h2>
+<p><code>`</code> [CASH_WARNING] 老大，今天的亞洲大跌是系統性壓力，不要慌。PG 的節奏是： 掛好 4 組限價單，讓市場帶著跌壓替你執行——</p>
+<p>2330 台積電：2,265 ～ 2,320（分批，不急於一日） 1514 亞力：97.0 ～ 99.0（分兩批，先上後下） 2421 建準：143.0 ～ 147.0（今日下半段 143~145 優先） 00878：31.5 ～ 32.0（幾乎確定觸及）</p>
+<p>現金主導權在老大手上。若今日台加權跌破 -3%（約 43,378 以下）， 系統性風險警示線觸發，12:30 MID 會重新評估所有建議動作。 <code>`</code></p>
+<p><strong>本次無「高位停利變現」建議，無新增待回補標記。</strong></p>
+<ul><li>若 2330 今日觸及 2,265~2,320 → 正式買點，MID 複核確認成交與剩餘籌碼</li><li>若 1514 今日觸及 97~99 → 分批執行，MID 複核</li><li>2421 維持低接中，注意法人連續動向</li><li>00878 掛好限價，靜待觸網</li></ul>
+<hr>
+<p>[🔍 開啟 PG 股票回補與關注 Lightbox 儀表板]</p>
+<hr>
+<h2>延續數據表</h2>
+<blockquote>本表由排程腳本依 <code>reports/state.json</code> 目前記錄的數字決定性產出，非本次報告分析內容。</blockquote>
+<div class="table-wrap"><table><thead><tr><th>代號</th><th>名稱</th><th>收盤價</th><th>第一批限價</th></tr></thead><tbody><tr><td>2421</td><td>建準</td><td>145.00</td><td>143.0-147.0</td></tr><tr><td>2356</td><td>英業達</td><td>65.20</td><td>61.5-63.0</td></tr><tr><td>2609</td><td>陽明</td><td>59.00</td><td>49.0-50.5</td></tr><tr><td>0052</td><td>富邦科技</td><td>60.15</td><td>57.5-59.0</td></tr><tr><td>0056</td><td>元大高股息</td><td>52.00</td><td>51.0-52.0</td></tr><tr><td>00878</td><td>國泰永續高股息</td><td>32.30</td><td>31.5-32.0</td></tr><tr><td>2330</td><td>台積電</td><td>2350</td><td>2265-2320</td></tr><tr><td>6117</td><td>迎廣</td><td>61.00</td><td>60.0-62.0</td></tr><tr><td>4533</td><td>協易機</td><td>25.90</td><td>25.0-26.0</td></tr><tr><td>1609</td><td>大亞</td><td>36.80</td><td>35.50-36.50</td></tr><tr><td>1514</td><td>亞力</td><td>99.50</td><td>97.0-99.0</td></tr><tr><td>6442</td><td>光聖</td><td>1530</td><td>1370-1405</td></tr><tr><td>3450</td><td>聯鈞</td><td>567</td><td>500-515</td></tr><tr><td>8358</td><td>金居</td><td>410.5</td><td>360-370</td></tr><tr><td>6213</td><td>聯茂</td><td>484</td><td>428-440</td></tr></tbody></table></div>
+<footer>BJSPG — 個人台股現股觀察輔助系統，僅供參考，不構成投資建議。</footer>
+</div>
+</body>
+</html>
